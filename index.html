@@ -6,7 +6,7 @@
 <title>Prova de Página — Manual de Normas MedGuias</title>
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#F5F8F6;
@@ -18,15 +18,17 @@
     --green-tint:#E3F3EC;
     --red:#D6402F;
     --red-tint:#FBE7E4;
+    --gold:#DDA23A;
+    --gold-tint:#FBF0DE;
     --text:#173226;
     --text-dim:#5B6E64;
     --text-faint:#93A69C;
-    --radius:14px;
-    --radius-sm:8px;
+    --radius:20px;
+    --radius-sm:10px;
     --shadow:0 2px 10px rgba(23,50,38,.06), 0 1px 2px rgba(23,50,38,.05);
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0;overflow-x:hidden;}
   body{
     background:var(--bg);
     color:var(--text);
@@ -35,7 +37,7 @@
     line-height:1.5;
   }
   #app{max-width:720px;margin:0 auto;padding:32px 20px 80px;min-height:100vh;}
-  h1,h2,h3{font-family:'Baloo 2',sans-serif;margin:0;}
+  h1,h2,h3{font-family:'Poppins',sans-serif;margin:0;}
   .mono{font-family:'Inter',sans-serif;}
   .eyebrow{
     font-size:12px;
@@ -72,7 +74,7 @@
     background:var(--green);
     clip-path:polygon(0 0, 100% 0, 100% 100%);
   }
-  .brand-text .title{font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+  .brand-text .title{font-family:'Poppins',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
   .brand-text .sub{font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.03em;}
 
   button{font-family:'Inter',sans-serif;cursor:pointer;}
@@ -80,19 +82,34 @@
     background:var(--green);
     color:#fff;
     border:none;
-    padding:13px 22px;
-    font-weight:700;
+    padding:14px 26px;
+    font-weight:800;
     font-size:14px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
     border-radius:999px;
-    transition:background .15s ease, transform .1s ease;
+    transition:transform .08s ease, filter .1s ease, box-shadow .1s ease;
+    box-shadow:0 2px 8px rgba(18,128,95,.24);
   }
-  .btn:hover{background:var(--green-dark);}
-  .btn:active{transform:scale(.98);}
+  .btn:hover{filter:brightness(1.06);}
+  .btn:active{transform:scale(.97);}
   .btn:disabled{opacity:.4;cursor:default;}
-  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--text);}
-  .btn.ghost:hover{background:var(--surface-2);}
+  .btn.ghost{background:var(--surface);border:1.5px solid var(--line);color:var(--text);box-shadow:none;}
+  .btn.ghost:hover{border-color:var(--green);color:var(--green);}
+  .btn.ghost:active{transform:scale(.97);}
   .btn.full{width:100%;}
-  .btn.danger-outline{background:transparent;border:1.5px solid var(--red);color:var(--red);}
+  .btn.danger-outline{background:transparent;border:1.5px solid var(--red);color:var(--red);box-shadow:none;}
+  .btn.cta{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    text-transform:none;letter-spacing:0;font-size:14.5px;font-weight:700;
+    padding:8px 8px 8px 24px;
+  }
+  .btn.cta::after{
+    content:'→';flex:none;width:34px;height:34px;border-radius:50%;
+    background:#fff;color:var(--green);display:flex;align-items:center;justify-content:center;
+    font-size:16px;font-weight:800;
+  }
+  .btn.ghost.cta::after{background:var(--green);color:#fff;}
 
   input{
     width:100%;
@@ -112,11 +129,15 @@
   .tab{padding:10px 4px;margin-right:24px;background:none;border:none;color:var(--text-dim);font-size:14px;font-weight:700;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;}
   .tab.active{color:var(--green);border-bottom-color:var(--green);}
 
-  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:10px;flex-wrap:wrap;}
-  .navbtn{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:700;letter-spacing:.01em;padding:6px 0;}
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:10px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid var(--line);}
+  .navbtn{background:none;border:none;color:var(--text-dim);font-size:12.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;padding:8px 0;}
   .navbtn:hover{color:var(--text);}
   .navbtn.active{color:var(--green);}
-  .navgroup{display:flex;gap:20px;}
+  .navgroup{display:flex;gap:22px;align-items:center;}
+  .navbtn.pill-out{
+    border:1.5px solid var(--line);border-radius:999px;padding:8px 18px;color:var(--text-dim);
+  }
+  .navbtn.pill-out:hover{border-color:var(--red);color:var(--red);}
 
   /* dashboard unit card */
   .unit-card{display:flex;align-items:center;gap:16px;cursor:pointer;}
@@ -130,21 +151,24 @@
     white-space:nowrap;
   }
   .unit-info{flex:1;min-width:0;}
-  .unit-info .t{font-weight:700;font-size:15.5px;margin-bottom:2px;font-family:'Baloo 2',sans-serif;}
+  .unit-info .t{font-weight:700;font-size:15.5px;margin-bottom:2px;font-family:'Poppins',sans-serif;}
   .unit-info .d{font-size:12.5px;color:var(--text-dim);}
   .unit-score{flex:none;text-align:right;}
-  .unit-score .pts{font-size:16px;font-weight:800;color:var(--green);font-family:'Baloo 2',sans-serif;}
+  .unit-score .pts{font-size:16px;font-weight:800;color:var(--green);font-family:'Poppins',sans-serif;}
   .unit-score .of{font-size:10px;color:var(--text-faint);font-weight:700;letter-spacing:.03em;}
   .unit-score.empty .pts{color:var(--text-faint);}
 
   /* content render */
-  .content h1{font-size:21px;margin:0 0 16px;color:var(--text);}
-  .content h2{font-size:15px;margin:22px 0 8px;color:var(--green);}
-  .content p{font-size:14px;color:#3C4E45;margin:0 0 12px;}
+  .content h1{font-size:23px;margin:0 0 18px;color:var(--text);font-weight:800;}
+  .content p{font-size:14.5px;color:#3C4E45;margin:0 0 13px;line-height:1.65;}
   .content strong{color:var(--text);}
-  .content ul{margin:0 0 14px;padding-left:0;list-style:none;}
-  .content li{font-size:13.5px;color:#3C4E45;padding-left:22px;position:relative;margin-bottom:6px;}
-  .content li::before{content:'•';position:absolute;left:4px;color:var(--green);font-weight:700;}
+  .content ul{margin:0 0 16px;padding-left:0;list-style:none;}
+  .content li{font-size:14px;color:#3C4E45;padding-left:24px;position:relative;margin-bottom:8px;line-height:1.5;}
+  .content li::before{
+    content:'✓';position:absolute;left:0;top:0;color:var(--green);font-weight:800;font-size:12px;
+    width:16px;height:16px;background:var(--green-tint);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
   .content code{
     font-family:'Inter',monospace;
     background:var(--green-tint);
@@ -154,64 +178,112 @@
     border-radius:5px;
     font-weight:600;
   }
-  .content table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:12.5px;border-radius:8px;overflow:hidden;}
-  .content th,.content td{text-align:left;padding:8px 10px;border:1px solid var(--line);}
-  .content th{color:var(--green-dark);background:var(--green-tint);font-weight:700;}
-  .content .callout{
-    background:var(--red-tint);border-left:4px solid var(--red);
-    padding:12px 14px;border-radius:8px;font-size:13.5px;
-    margin:0 0 14px;color:#7A2A20;font-weight:600;
+  .content table{
+    width:100%;border-collapse:separate;border-spacing:0;margin:0 0 18px;font-size:13px;
+    border-radius:14px;overflow:hidden;border:2px solid var(--line);
   }
+  .content th,.content td{text-align:left;padding:10px 12px;}
+  .content th{color:#fff;background:var(--green);font-weight:700;font-family:'Poppins',sans-serif;}
+  .content td{border-top:1px solid var(--line);}
+  .content tbody tr:nth-child(even) td{background:var(--surface-2);}
+  .content .callout{
+    background:var(--red-tint);border:2px solid var(--red);
+    padding:14px 16px;border-radius:16px;font-size:13.5px;
+    margin:0 0 16px;color:#7A2A20;font-weight:700;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .content .callout::before{content:'⚠️';flex:none;}
   .content details.example{
-    background:var(--green-tint);border:1px solid var(--line);
-    border-radius:var(--radius-sm);margin:0 0 14px;padding:12px 14px;
+    background:var(--surface);border:2px solid var(--green);
+    border-radius:16px;margin:0 0 16px;padding:4px 16px;
+    box-shadow:var(--shadow);
   }
   .content details.example summary{
-    cursor:pointer;font-weight:700;color:var(--green-dark);font-size:13.5px;
-    list-style:none;
+    cursor:pointer;font-weight:800;color:var(--green-dark);font-size:14px;
+    list-style:none;padding:12px 0;font-family:'Poppins',sans-serif;
+    display:flex;align-items:center;gap:8px;
   }
   .content details.example summary::-webkit-details-marker{display:none;}
-  .content details.example summary::before{content:'▸  ';color:var(--green);}
-  .content details.example[open] summary::before{content:'▾  ';}
-  .content details.example .example-body{margin-top:10px;}
-  .content details.example .example-body p{margin:0 0 8px;font-size:13px;color:#2C4A3B;}
+  .content details.example summary::before{
+    content:'▸';color:#fff;background:var(--green);width:20px;height:20px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:11px;flex:none;
+    transition:transform .15s;
+  }
+  .content details.example[open] summary::before{transform:rotate(90deg);}
+  .content details.example .example-body{margin:0 0 14px;padding-top:4px;border-top:1px dashed var(--line);}
+  .content details.example .example-body p{margin:12px 0 8px;font-size:13.5px;}
   .content details.example .example-body ul{margin:0 0 8px;}
   .content details.example .example-body li{color:#2C4A3B;}
-  .content-img{width:100%;border-radius:10px;border:1px solid var(--line);display:block;margin:0 0 10px;}
+  .content-img{width:100%;border-radius:12px;border:2px solid var(--line);display:block;margin:0 0 10px;box-shadow:var(--shadow);}
+
+  /* full-bleed chapter sections (Samsung-style panels) */
+  .content .chapter{
+    width:100vw;position:relative;left:50%;right:50%;
+    margin-left:-50vw;margin-right:-50vw;margin-top:0;margin-bottom:0;
+    padding:46px 20px;
+  }
+  .content .chapter.tint-a{background:var(--surface);}
+  .content .chapter.tint-b{background:var(--green-tint);}
+  .content .chapter-inner{max-width:680px;margin:0 auto;}
+  .content .chapter h2{
+    font-size:24px;margin:0 0 18px;color:var(--text);font-weight:800;
+    font-family:'Poppins',sans-serif;line-height:1.2;
+    display:flex;align-items:center;gap:10px;
+  }
+  .content .chapter h2::before{
+    content:'';width:10px;height:34px;border-radius:5px;background:var(--red);flex:none;
+  }
+  @media (min-width: 640px){
+    .content .chapter{padding:64px 32px;}
+    .content .chapter h2{font-size:28px;}
+  }
+
+  /* unit page header badge */
+  .unit-head{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+  .unit-badge{
+    width:44px;height:44px;border-radius:50%;flex:none;
+    background:var(--green);color:#fff;font-family:'Poppins',sans-serif;font-weight:800;font-size:15px;
+    display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(18,128,95,.28);
+  }
+  .unit-head h1{margin:0;font-size:21px;}
 
   /* quiz */
   .qprogress{display:flex;gap:4px;margin-bottom:22px;}
   .qprogress i{flex:1;height:5px;background:var(--line);border-radius:3px;}
   .qprogress i.done{background:var(--green);}
   .qprogress i.wrong{background:var(--red);}
-  .qtext{font-size:18px;font-weight:700;margin-bottom:18px;line-height:1.4;font-family:'Baloo 2',sans-serif;color:var(--text);}
+  .qtext{font-size:18px;font-weight:700;margin-bottom:18px;line-height:1.4;font-family:'Poppins',sans-serif;color:var(--text);}
   .opt{
     display:block;width:100%;text-align:left;
-    background:var(--surface-2);
+    background:var(--surface);
     border:1.5px solid var(--line);
     color:var(--text);
-    padding:14px 16px;
-    font-size:14px;
-    font-weight:500;
-    margin-bottom:9px;
-    border-radius:var(--radius-sm);
-    transition:border-color .15s, background .15s;
+    padding:14px 18px;
+    font-size:14.5px;
+    font-weight:700;
+    margin-bottom:10px;
+    border-radius:20px;
+    box-shadow:var(--shadow);
+    transition:border-color .12s, transform .08s, box-shadow .1s;
   }
-  .opt:hover:not(:disabled){border-color:var(--green);background:#fff;}
+  .opt:hover:not(:disabled){border-color:var(--green);}
+  .opt:active:not(:disabled){transform:scale(.98);}
   .opt:disabled{cursor:default;}
-  .opt.correct{border-color:var(--green);background:var(--green-tint);color:var(--green-dark);font-weight:700;}
-  .opt.wrong{border-color:var(--red);background:var(--red-tint);color:var(--red);font-weight:700;}
+  .opt.correct{border-color:var(--green);background:var(--green-tint);color:var(--green-dark);}
+  .opt.wrong{border-color:var(--red);background:var(--red-tint);color:var(--red);}
   .feedback{
-    margin-top:16px;padding:14px 16px;
-    background:var(--green-tint);border-left:4px solid var(--green);
-    border-radius:var(--radius-sm);
-    font-size:13.5px;color:#2C4A3B;
+    margin-top:16px;padding:16px 18px;
+    border-radius:16px;
+    font-size:14px;
+    background:var(--green);color:#fff;
   }
-  .feedback.bad{border-left-color:var(--red);background:var(--red-tint);color:#7A2A20;}
+  .feedback strong{display:block;font-family:'Poppins',sans-serif;font-size:16px;margin-bottom:3px;}
+  .feedback .fb-text{font-weight:500;font-size:13px;opacity:.95;}
+  .feedback.bad{background:var(--red);}
   .qfooter{margin-top:20px;display:flex;justify-content:flex-end;}
 
   .summary{text-align:center;padding:20px 0;}
-  .summary .big{font-family:'Baloo 2',sans-serif;font-size:46px;font-weight:800;color:var(--green);margin:14px 0 6px;}
+  .summary .big{font-family:'Poppins',sans-serif;font-size:46px;font-weight:800;color:var(--green);margin:14px 0 6px;}
   .summary .sub{color:var(--text-dim);font-size:13px;margin-bottom:26px;font-weight:600;}
 
   /* ranking */
@@ -220,13 +292,239 @@
   .rank-pos{font-size:14px;font-weight:800;color:var(--text-faint);width:26px;flex:none;text-align:center;}
   .rank-row.top .rank-pos{color:#fff;background:var(--red);border-radius:50%;width:24px;height:24px;line-height:24px;font-size:12px;}
   .rank-name{flex:1;font-size:14.5px;font-weight:600;}
-  .rank-pts{font-size:14.5px;color:var(--green);font-weight:800;font-family:'Baloo 2',sans-serif;}
+  .rank-pts{font-size:14.5px;color:var(--green);font-weight:800;font-family:'Poppins',sans-serif;}
 
   .empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13.5px;}
   .error-msg{color:var(--red);font-size:13px;margin:-4px 0 12px;font-weight:600;}
   .loading{text-align:center;padding:60px 0;color:var(--text-dim);font-weight:700;font-size:13px;letter-spacing:.03em;}
+
+  /* skeleton loading */
+  .skel{background:linear-gradient(90deg, var(--surface-2) 25%, var(--line) 37%, var(--surface-2) 63%);background-size:400% 100%;animation:skel-shine 1.4s ease infinite;border-radius:16px;}
+  @keyframes skel-shine{0%{background-position:100% 0;}100%{background-position:0 0;}}
+  .skel-row{display:flex;gap:10px;margin-bottom:12px;}
+  .skel-chip{flex:1;height:56px;border-radius:16px;}
+  .skel-tile{height:118px;border-radius:22px;}
+
+  /* toasts */
+  .toast-wrap{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
+  .toast{
+    background:var(--text);color:#fff;font-weight:600;font-size:13px;
+    padding:10px 18px;border-radius:999px;box-shadow:var(--shadow);
+    opacity:0;transform:translateY(-10px);animation:toast-in .25s ease forwards, toast-out .3s ease forwards 2.3s;
+    white-space:nowrap;
+  }
+  @keyframes toast-in{to{opacity:1;transform:translateY(0);}}
+  @keyframes toast-out{to{opacity:0;transform:translateY(-10px);}}
+
+  /* ripple */
+  .ripple-host{position:relative;overflow:hidden;}
+  .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.55);transform:scale(0);animation:ripple-anim .5s ease-out;pointer-events:none;}
+  .opt .ripple{background:rgba(18,128,95,.18);}
+  @keyframes ripple-anim{to{transform:scale(2.6);opacity:0;}}
+
+  /* card entrance animation */
+  @keyframes fade-up{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  .fade-up{animation:fade-up .35s ease both;}
+
+  /* progress bar */
+  .xp-bar{height:10px;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;}
+  .xp-bar-fill{height:100%;border-radius:999px;background:var(--green);width:0;transition:width .6s cubic-bezier(.2,.8,.2,1);}
+
+  /* avatar */
+  .avatar-circle{
+    width:30px;height:30px;border-radius:50%;background:var(--green-tint);color:var(--green-dark);
+    display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:700;
+    font-size:14px;flex:none;border:1.5px solid var(--surface);box-shadow:var(--shadow);cursor:pointer;
+    transition:transform .1s;
+  }
+  .avatar-circle:hover{transform:scale(1.08);}
+
+  /* avatar picker modal */
+  .modal-overlay{
+    position:fixed;inset:0;background:rgba(23,50,38,.45);z-index:90;
+    display:flex;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-card{
+    background:#fff;border-radius:24px;padding:24px 22px;max-width:340px;width:100%;
+    box-shadow:0 10px 40px rgba(23,50,38,.25);max-height:80vh;overflow-y:auto;
+  }
+  .modal-card h3{font-family:'Poppins',sans-serif;font-size:17px;font-weight:700;margin:0 0 4px;color:var(--text);}
+  .modal-card .sub{font-size:12.5px;color:var(--text-dim);margin-bottom:16px;}
+  .avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+  .avatar-opt{
+    width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:26px;cursor:pointer;border:2.5px solid transparent;transition:transform .1s;
+  }
+  .avatar-opt:hover{transform:scale(1.08);}
+  .avatar-opt.selected{border-color:var(--green);}
+
+  /* crowns */
+  .avatar-circle{position:relative;}
+  .crown-badge{
+    position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    font-size:15px;line-height:1;filter:drop-shadow(0 1px 1px rgba(0,0,0,.25));
+  }
+  .crown-overlay .modal-card{text-align:center;}
+  .crown-big{
+    width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:50px;margin:4px auto 16px;animation:crown-pop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes crown-pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+
+  /* streak / level chips */
+  .gami-row{display:flex;gap:8px;margin-bottom:14px;}
+  .gami-chip{
+    flex:1;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);
+    border-radius:16px;padding:10px 8px;text-align:center;
+  }
+  .gami-chip .v{font-family:'Poppins',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+  .gami-chip .l{font-size:9.5px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+
+  /* achievements */
+  .badges-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .badge-ico{
+    width:38px;height:38px;border-radius:50%;background:var(--gold-tint);color:#7A5417;
+    display:flex;align-items:center;justify-content:center;font-size:17px;
+    border:1.5px solid var(--gold);
+  }
+  .badge-ico.locked{background:var(--surface-2);color:var(--text-faint);border-color:var(--line);opacity:.5;}
   .backlink{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:700;margin-bottom:18px;padding:0;}
   .backlink:hover{color:var(--green);}
+
+  /* stats bar */
+  .stats-bar{display:flex;gap:10px;margin-bottom:22px;}
+  .stat-chip{
+    flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+    background:var(--surface);border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    border-radius:16px;padding:12px 10px;
+  }
+  .stat-chip .ico{font-size:20px;line-height:1;}
+  .stat-chip .num{font-family:'Poppins',sans-serif;font-size:20px;font-weight:800;color:var(--green);line-height:1;}
+  .stat-chip .lbl{font-size:10px;color:var(--text-dim);font-weight:700;text-transform:uppercase;letter-spacing:.03em;}
+
+  /* organic unit grid */
+  .blob-bg{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none;}
+  .blob-bg svg{position:absolute;}
+  .hero-wrap{position:relative;padding:4px 0 6px;overflow:hidden;}
+  .hero-inner{position:relative;z-index:1;}
+
+  .unit-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;}
+  .unit-tile{
+    grid-column:span 1;
+    border-radius:22px;padding:16px;position:relative;min-height:118px;
+    display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;
+    transition:transform .12s ease;border:none;
+  }
+  .unit-tile.wide{grid-column:span 2;min-height:88px;flex-direction:row;align-items:center;justify-content:space-between;}
+  .unit-tile:active{transform:scale(.97);}
+  .unit-tile .tag{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;opacity:.7;}
+  .unit-tile .t{font-family:'Poppins',sans-serif;font-weight:700;font-size:14.5px;line-height:1.25;margin-top:4px;}
+  .unit-tile .pts{font-size:11px;font-weight:800;margin-top:8px;}
+  .unit-tile .arrow-circle{
+    width:30px;height:30px;border-radius:50%;background:#fff;flex:none;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;
+  }
+  .unit-tile:not(.wide) .arrow-circle{position:absolute;bottom:14px;right:14px;}
+  .unit-tile.tint-green{background:var(--green-tint);color:var(--green-dark);}
+  .unit-tile.tint-green .arrow-circle{color:var(--green-dark);}
+  .unit-tile.tint-gold{background:var(--gold-tint);color:#7A5417;}
+  .unit-tile.tint-gold .arrow-circle{color:#7A5417;}
+  .unit-tile.tint-red{background:var(--red-tint);color:#8A2C20;}
+  .unit-tile.tint-red .arrow-circle{color:#8A2C20;}
+  .unit-tile.solid-green{background:var(--green);color:#fff;}
+  .unit-tile.solid-green .arrow-circle{color:var(--green);}
+  .unit-tile.done{background:#fff;border:2px solid var(--green);color:var(--green-dark);}
+  .unit-tile.done .arrow-circle{background:var(--green-tint);color:var(--green-dark);}
+  .unit-tile .check{
+    width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex:none;
+  }
+
+  /* floating interactive mascot (unit reading + quiz) */
+  .mascot-float{
+    position:fixed;right:18px;bottom:18px;z-index:70;
+    display:flex;align-items:flex-end;gap:8px;
+    max-width:calc(100vw - 36px);
+  }
+  .mascot-float .float-bubble{
+    background:var(--surface);border:1.5px solid var(--line);box-shadow:var(--shadow);
+    color:var(--text);font-family:'Poppins',sans-serif;font-weight:700;font-size:12px;
+    padding:8px 12px;border-radius:14px;max-width:170px;line-height:1.3;
+    position:relative;top:8px;transition:opacity .15s ease;
+  }
+  .float-avatar{
+    animation:mascot-bounce 2.4s ease-in-out infinite;flex:none;
+    filter:drop-shadow(0 3px 6px rgba(23,50,38,.18));
+    transition:transform .12s ease;
+  }
+  @media (max-width:480px){
+    .mascot-float{right:12px;bottom:12px;}
+    .mascot-float .float-bubble{max-width:120px;font-size:11px;padding:6px 10px;}
+  }
+
+  /* big greeting mascot (auth / welcome screens) */
+  .mascot-greet{display:flex;flex-direction:column;align-items:center;margin-bottom:20px;text-align:center;}
+  .mascot-big{animation:mascot-bounce 2.4s ease-in-out infinite;margin-bottom:10px;}
+  @keyframes mascot-bounce{
+    0%,100%{transform:translateY(0) rotate(-2deg);}
+    50%{transform:translateY(-8px) rotate(2deg);}
+  }
+  .mascot-bubble-big{
+    background:var(--surface);border:1.5px solid var(--line);box-shadow:var(--shadow);
+    color:var(--text);font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;
+    padding:10px 16px;border-radius:16px;max-width:280px;position:relative;
+  }
+  .mascot-bubble-big::after{
+    content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+    border:8px solid transparent;border-bottom-color:var(--line);
+  }
+  .mascot-bubble-big::before{
+    content:'';position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    border:7px solid transparent;border-bottom-color:var(--surface);z-index:1;
+  }
+
+  /* welcome-back banner on dashboard */
+  .welcome-banner{
+    display:flex;align-items:center;gap:12px;
+    background:var(--green-tint);border:2px solid var(--green);border-radius:16px;
+    padding:12px 16px;margin-bottom:18px;
+  }
+  .welcome-banner .txt{font-family:'Poppins',sans-serif;font-weight:700;font-size:14px;color:var(--green-dark);}
+
+  /* confetti celebration */
+  .confetti-wrap{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:80;}
+  .confetti{position:absolute;top:-20px;width:8px;height:8px;border-radius:2px;animation:confetti-fall 1.7s ease-in forwards;}
+  .confetti.c0{background:var(--green);}
+  .confetti.c1{background:var(--red);}
+  .confetti.c2{background:var(--gold);}
+  .confetti.c3{background:var(--green-dark);}
+  .confetti.c4{background:#fff;border:1px solid var(--line);}
+  .confetti.c5{background:var(--red-tint);}
+  @keyframes confetti-fall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1;}
+    100%{transform:translateY(70vh) rotate(360deg);opacity:0;}
+  }
+  .summary .tier{font-family:'Poppins',sans-serif;font-size:17px;font-weight:700;color:var(--text);margin-top:2px;}
+
+  /* podium */
+  .podium{display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:18px;}
+  .podium-col{display:flex;flex-direction:column;align-items:center;width:92px;}
+  .podium-avatar{
+    width:44px;height:44px;border-radius:50%;background:var(--green-tint);color:var(--green-dark);
+    display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-weight:700;
+    font-size:15px;margin-bottom:6px;border:2px solid var(--surface);box-shadow:var(--shadow);
+  }
+  .podium-col.h1 .podium-avatar{width:54px;height:54px;font-size:17px;border-color:var(--gold);}
+  .podium-name{font-size:11.5px;font-weight:700;text-align:center;margin-bottom:2px;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .podium-pts{font-size:11px;color:var(--green);font-weight:800;margin-bottom:6px;}
+  .podium-block{
+    width:100%;border-radius:12px 12px 0 0;display:flex;align-items:flex-start;justify-content:center;
+    padding-top:6px;font-family:'Poppins',sans-serif;font-weight:800;color:#fff;font-size:18px;
+  }
+  .podium-col.h1 .podium-block{height:78px;background:var(--green);}
+  .podium-col.h2 .podium-block{height:54px;background:var(--red);}
+  .podium-col.h3 .podium-block{height:38px;background:var(--text-faint);}
 </style>
 </head>
 <body>
@@ -250,9 +548,144 @@ const state = {
   quizScore: 0,
   answered: null, // index selected for current question
   ranking: [],
+  justLoggedIn: false,
+  newBadges: [],
 };
 
 const el = document.getElementById("app");
+const BADGES = {
+  primeira_unidade: { icon: "🎯", nome: "Primeiros passos", desc: "Concluiu a primeira unidade" },
+  perfeito: { icon: "🏅", nome: "Nota máxima", desc: "Gabaritou um quiz" },
+  todas_unidades: { icon: "👑", nome: "Manual completo", desc: "Concluiu todas as unidades" },
+  streak_3: { icon: "🔥", nome: "Constância", desc: "3 dias seguidos de treino" },
+  streak_7: { icon: "⚡", nome: "Sequência forte", desc: "7 dias seguidos de treino" },
+};
+const AVATARS = ["🩺","👩‍⚕️","👨‍⚕️","🎨","📸","✏️","🖥️","📐","🌿","⭐","😊","🦉"];
+const CROWNS = {
+  diamante: { label: "Coroa Diamante",    ordinal: "1ª",  bg: "#E3EEFB", color: "#1E4E8C" },
+  ouro:     { label: "Coroa de Ouro",     ordinal: "2ª",  bg: "#FBF0DE", color: "#7A5417" },
+  prata:    { label: "Coroa de Prata",    ordinal: "3ª",  bg: "#ECEEF0", color: "#5B6E64" },
+  bronze:   { label: "Coroa de Bronze",   ordinal: "4ª",  bg: "#F5E4D8", color: "#8A4B23" },
+};
+const CROWN_ORDER = ["diamante","ouro","prata","bronze"];
+function crownForAttempt(n){
+  return n===1 ? "diamante" : n===2 ? "ouro" : n===3 ? "prata" : n===4 ? "bronze" : null;
+}
+function bestCrown(){
+  const owned = state.progresso.map(p => p.coroa).filter(Boolean);
+  return CROWN_ORDER.find(c => owned.includes(c)) || null;
+}
+function showCrownCelebration(tier){
+  const c = CROWNS[tier];
+  const confetti = Array.from({length: 24}).map((_,i) =>
+    `<span class="confetti c${i % 6}" style="left:${(i * 4.3) % 100}%; animation-delay:${(i % 6) * 0.1}s"></span>`
+  ).join("");
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay crown-overlay";
+  overlay.innerHTML = `
+    <div class="confetti-wrap">${confetti}</div>
+    <div class="modal-card">
+      <div class="crown-big" style="background:${c.bg};color:${c.color};">👑</div>
+      <h3>Parabéns! 🎉</h3>
+      <div class="sub">Você acertou 100% na ${c.ordinal} tentativa e ganhou a <strong>${c.label}</strong>!</div>
+      <button class="btn full cta" id="crown-continue">Continuar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector("#crown-continue").onclick = () => {
+    overlay.remove();
+    state.view = "dashboard";
+    render();
+  };
+}
+function avatarTint(i){
+  const tints = ["var(--green-tint)","var(--gold-tint)","var(--red-tint)"];
+  return tints[i % tints.length];
+}
+function openAvatarPicker(){
+  const current = state.profile?.avatar;
+  const overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.innerHTML = `
+    <div class="modal-card">
+      <h3>Escolha seu avatar</h3>
+      <div class="sub">Ele aparece no topo do app e no ranking.</div>
+      <div class="avatar-grid">
+        ${AVATARS.map((a,i) => `
+          <div class="avatar-opt ${a===current?'selected':''}" data-a="${a}" style="background:${avatarTint(i)};">${a}</div>
+        `).join("")}
+      </div>
+      <button class="btn ghost full" id="avatar-cancel">Cancelar</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.onclick = (e) => { if(e.target === overlay) overlay.remove(); };
+  overlay.querySelector("#avatar-cancel").onclick = () => overlay.remove();
+  overlay.querySelectorAll(".avatar-opt").forEach(opt => {
+    opt.onclick = async () => {
+      const a = opt.dataset.a;
+      const { data } = await sb.from("perfis").update({ avatar: a }).eq("id", state.profile.id).select().single();
+      if(data) state.profile = data;
+      overlay.remove();
+      showToast("Avatar atualizado!");
+      render();
+    };
+  });
+}
+function levelInfo(xp){
+  const level = Math.floor(xp / 100) + 1;
+  const into = xp % 100;
+  return { level, into, pct: into / 100 };
+}
+function showToast(msg){
+  let wrap = document.querySelector(".toast-wrap");
+  if(!wrap){ wrap = document.createElement("div"); wrap.className = "toast-wrap"; document.body.appendChild(wrap); }
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 2700);
+}
+function wireRipple(container){
+  container.querySelectorAll(".btn, .opt").forEach(b => {
+    if(b.classList.contains("ripple-host")) return;
+    b.classList.add("ripple-host");
+    b.addEventListener("click", (e) => {
+      const r = document.createElement("span");
+      const rect = b.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.className = "ripple";
+      r.style.width = r.style.height = size + "px";
+      r.style.left = (e.clientX - rect.left - size/2) + "px";
+      r.style.top = (e.clientY - rect.top - size/2) + "px";
+      b.appendChild(r);
+      setTimeout(() => r.remove(), 500);
+    });
+  });
+}
+function checkAchievements(){
+  if(state.progresso.length >= 1) unlockBadge("primeira_unidade");
+  if(state.unidades.length && state.progresso.length >= state.unidades.length) unlockBadge("todas_unidades");
+}
+async function updateStreak(){
+  const p = state.profile;
+  const today = new Date().toISOString().slice(0,10);
+  if(p.last_active_date === today) return; // already counted today
+  const y = new Date(); y.setDate(y.getDate()-1);
+  const yStr = y.toISOString().slice(0,10);
+  const newStreak = p.last_active_date === yStr ? (p.streak_count||0) + 1 : 1;
+  const { data } = await sb.from("perfis").update({ streak_count: newStreak, last_active_date: today }).eq("id", p.id).select().single();
+  if(data) state.profile = data;
+  if(newStreak === 3) unlockBadge("streak_3");
+  if(newStreak === 7) unlockBadge("streak_7");
+}
+async function unlockBadge(key){
+  const atual = state.profile.medalhas || [];
+  if(atual.includes(key)) return;
+  const novas = [...atual, key];
+  const { data } = await sb.from("perfis").update({ medalhas: novas }).eq("id", state.profile.id).select().single();
+  if(data) state.profile = data;
+  state.newBadges.push(key);
+  showToast(`🏅 Nova conquista: ${BADGES[key]?.nome || key}`);
+}
 
 // ---------------- tiny markdown renderer ----------------
 function mdToHtml(md){
@@ -260,6 +693,7 @@ function mdToHtml(md){
   let html = "";
   let inList = false, inTable = false, tableRows = [];
   let inExample = false, exampleTitle = "", exampleBuf = [];
+  let chapterOpen = false, chapterIdx = 0;
   const inline = (s) => s
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -300,6 +734,14 @@ function mdToHtml(md){
       inExample = false; exampleTitle = ""; exampleBuf = [];
     }
   };
+  const closeChapter = () => { if(chapterOpen){ html += `</div></section>`; chapterOpen = false; } };
+  const openChapter = (headingHtml) => {
+    closeChapter();
+    chapterIdx++;
+    const tint = chapterIdx % 2 === 0 ? "tint-b" : "tint-a";
+    html += `<section class="chapter ${tint}"><div class="chapter-inner">${headingHtml}`;
+    chapterOpen = true;
+  };
   for(let raw of lines){
     const line = raw.trim();
     if(inExample){
@@ -321,7 +763,11 @@ function mdToHtml(md){
       continue;
     }
     if(line.startsWith("# ")){ closeList(); closeTable(); html += `<h1>${inline(line.slice(2))}</h1>`; continue; }
-    if(line.startsWith("## ")){ closeList(); closeTable(); html += `<h2>${inline(line.slice(3))}</h2>`; continue; }
+    if(line.startsWith("## ")){
+      closeList(); closeTable();
+      openChapter(`<h2>${inline(line.slice(3))}</h2>`);
+      continue;
+    }
     if(line.startsWith("|")){
       if(/^\|[\s-:|]+\|$/.test(line)){ continue; } // separator row
       closeList();
@@ -343,7 +789,7 @@ function mdToHtml(md){
     closeList();
     html += `<p>${inline(line)}</p>`;
   }
-  closeList(); closeTable(); closeExample();
+  closeList(); closeTable(); closeExample(); closeChapter();
   return html;
 }
 
@@ -357,7 +803,7 @@ async function loadProgresso(){
   if(!error) state.progresso = data || [];
 }
 async function loadRanking(){
-  const { data, error } = await sb.from("perfis").select("nome,pontos_total").order("pontos_total",{ascending:false}).limit(50);
+  const { data, error } = await sb.from("perfis").select("nome,pontos_total,avatar").order("pontos_total",{ascending:false}).limit(50);
   if(!error) state.ranking = data || [];
 }
 async function ensureProfile(){
@@ -370,13 +816,14 @@ async function ensureProfile(){
 
 // ---------------- render root ----------------
 async function render(){
-  if(state.view === "auth") return renderAuth();
-  if(state.view === "set-password") return renderSetPassword();
-  if(state.view === "dashboard") return renderDashboard();
-  if(state.view === "unit") return renderUnit();
-  if(state.view === "quiz") return renderQuiz();
-  if(state.view === "ranking") return renderRanking();
-  el.innerHTML = `<div class="loading">CARREGANDO…</div>`;
+  if(state.view === "auth") renderAuth();
+  else if(state.view === "set-password") renderSetPassword();
+  else if(state.view === "dashboard") renderDashboard();
+  else if(state.view === "unit") renderUnit();
+  else if(state.view === "quiz") renderQuiz();
+  else if(state.view === "ranking") renderRanking();
+  else { el.innerHTML = `<div class="loading">CARREGANDO…</div>`; return; }
+  wireRipple(el);
 }
 
 function brandHeader(){
@@ -394,10 +841,65 @@ function brandHeader(){
   </div>`;
 }
 
-// ---------------- AUTH VIEW ----------------
+function blobsBg(){
+  return `
+  <div class="blob-bg">
+    <svg width="260" height="260" viewBox="0 0 260 260" style="top:-90px;right:-80px;">
+      <path d="M130,20 C190,20 230,60 230,130 C230,200 190,240 130,240 C70,240 30,200 30,130 C30,60 70,20 130,20 Z" fill="var(--green-tint)"/>
+    </svg>
+    <svg width="90" height="90" viewBox="0 0 90 90" style="bottom:10px;left:-30px;">
+      <circle cx="45" cy="45" r="45" fill="var(--gold-tint)"/>
+    </svg>
+  </div>`;
+}
+function mascotSVG(size, mood){
+  const eyes = mood === "sad"
+    ? `<circle cx="17" cy="11.5" r="1.3" fill="#2B2118"/><circle cx="23" cy="11.5" r="1.3" fill="#2B2118"/>`
+    : `<circle cx="17" cy="11" r="1.3" fill="#2B2118"/><circle cx="23" cy="11" r="1.3" fill="#2B2118"/>`;
+  const mouth = mood === "sad"
+    ? `<path d="M17 16 Q20 13.5 23 16" stroke="#2B2118" stroke-width="1.3" fill="none" stroke-linecap="round"/>`
+    : `<path d="M17 14.5 Q20 17.5 23 14.5" stroke="#2B2118" stroke-width="1.3" fill="none" stroke-linecap="round"/>`;
+  const brows = mood === "sad"
+    ? `<path d="M14.5 8.5 L18 9.5" stroke="#2B2118" stroke-width="1.1" stroke-linecap="round"/><path d="M25.5 8.5 L22 9.5" stroke="#2B2118" stroke-width="1.1" stroke-linecap="round"/>`
+    : "";
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 40 44">
+      <path d="M11 8 Q20 -3 29 8 L27 8 Q20 2 13 8 Z" fill="#3B2A1F"/>
+      <circle cx="20" cy="12" r="8.5" fill="#F0C29A"/>
+      ${brows}${eyes}${mouth}
+      <rect x="5" y="21" width="30" height="21" rx="11" fill="#FFFFFF" stroke="var(--line)" stroke-width="1.2"/>
+      <path d="M15 21 L20 27 L13 24.5 Z" style="fill:var(--green)"/>
+      <path d="M25 21 L20 27 L27 24.5 Z" style="fill:var(--green)"/>
+      <rect x="18" y="30" width="4" height="9" rx="1" style="fill:var(--red)"/>
+      <rect x="15.5" y="33" width="9" height="4" rx="1" style="fill:var(--red)"/>
+      <path d="M9 23 Q7 30 12 32 Q16 33.5 15 29" stroke="var(--green)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+      <circle cx="15" cy="29.5" r="1.8" style="fill:var(--green)"/>
+    </svg>`;
+}
+function floatingMascot(id, mood, msg){
+  return `<div class="mascot-float" id="${id}">
+    <div class="float-bubble">${msg}</div>
+    <div class="float-avatar">${mascotSVG(52, mood)}</div>
+  </div>`;
+}
+function updateFloatingMascot(id, mood, msg){
+  const wrap = document.getElementById(id);
+  if(!wrap) return;
+  wrap.querySelector(".float-bubble").textContent = msg;
+  wrap.querySelector(".float-avatar").innerHTML = mascotSVG(52, mood);
+}
 function renderAuth(){
   el.innerHTML = `
-    ${brandHeader()}
+    <div class="hero-wrap">
+      ${blobsBg()}
+      <div class="hero-inner">
+        ${brandHeader()}
+        <div class="mascot-greet">
+          <div class="mascot-big" id="mascot-big">${mascotSVG(72, "happy")}</div>
+          <div class="mascot-bubble-big" id="mascot-bubble">Oi! Pronto pra revisar as normas dos impressos?</div>
+        </div>
+      </div>
+    </div>
     <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
       <div class="eyebrow" style="margin-bottom:16px;">ACESSO RESTRITO À EQUIPE</div>
       <div id="auth-error" class="error-msg" style="display:none;"></div>
@@ -405,18 +907,23 @@ function renderAuth(){
       <input type="email" id="f-email" placeholder="voce@medguias.com.br" />
       <label>Senha</label>
       <input type="password" id="f-pass" placeholder="••••••••" />
-      <button class="btn full" id="btn-login">Entrar</button>
+      <button class="btn full cta" id="btn-login">Entrar</button>
       <div style="margin-top:14px;font-size:12px;color:var(--text-faint);">Não tem conta? Peça ao responsável pelo manual para criar a sua.</div>
     </div>
   `;
+  const sadReact = (msg) => {
+    document.getElementById("mascot-big").innerHTML = mascotSVG(72, "sad");
+    document.getElementById("mascot-bubble").textContent = msg;
+  };
   const showErr = (msg) => { const e=document.getElementById("auth-error"); e.textContent=msg; e.style.display="block"; };
   document.getElementById("btn-login").onclick = async () => {
     const email = document.getElementById("f-email").value.trim();
     const password = document.getElementById("f-pass").value;
-    if(!email || !password) return showErr("Preencha email e senha.");
+    if(!email || !password){ showErr("Preencha email e senha."); sadReact("Ops, faltou preencher algo ali em cima!"); return; }
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
-    if(error) return showErr(traduzErro(error.message));
+    if(error){ showErr(traduzErro(error.message)); sadReact("Hmm, não bateu. Confere o email e a senha!"); return; }
     state.session = data.session;
+    state.justLoggedIn = true;
     await boot();
   };
 }
@@ -428,14 +935,22 @@ function traduzErro(msg){
 }
 
 // ---------------- TOPBAR (logged-in views) ----------------
+function initialsOfName(nome){
+  return (nome||"").trim().split(/\s+/).map(s=>s[0]).slice(0,2).join("").toUpperCase();
+}
 function topbar(active){
+  const nome = state.profile?.nome || "";
+  const avatarContent = state.profile?.avatar || initialsOfName(nome);
+  const crown = bestCrown();
+  const crownBadge = crown ? `<span class="crown-badge" style="color:${CROWNS[crown].color};" title="${CROWNS[crown].label}">👑</span>` : "";
   return `
   <div class="topbar">
     ${brandHeader()}
     <div class="navgroup">
       <button class="navbtn ${active==='dashboard'?'active':''}" id="nav-dash">UNIDADES</button>
       <button class="navbtn ${active==='ranking'?'active':''}" id="nav-rank">RANKING</button>
-      <button class="navbtn" id="nav-out">SAIR</button>
+      <div class="avatar-circle" id="avatar-btn" title="Trocar avatar">${avatarContent}${crownBadge}</div>
+      <button class="navbtn pill-out" id="nav-out">SAIR</button>
     </div>
   </div>`;
 }
@@ -443,35 +958,81 @@ function wireTopbar(){
   document.getElementById("nav-dash").onclick = () => { state.view="dashboard"; render(); };
   document.getElementById("nav-rank").onclick = async () => { await loadRanking(); state.view="ranking"; render(); };
   document.getElementById("nav-out").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+  document.getElementById("avatar-btn").onclick = openAvatarPicker;
 }
 
 // ---------------- DASHBOARD ----------------
 function renderDashboard(){
-  const cards = state.unidades.map(u => {
+  const totalPts = state.progresso.reduce((s,p) => s + p.pontos, 0);
+  const doneCount = state.progresso.length;
+  const xp = state.profile?.pontos_total || totalPts;
+  const lvl = levelInfo(xp);
+  const streak = state.profile?.streak_count || 0;
+  const medalhas = state.profile?.medalhas || [];
+  const tints = ["tint-green","tint-gold","tint-red"];
+  const tiles = state.unidades.map((u,i) => {
     const prog = state.progresso.find(p => p.unidade_id === u.id);
-    const totalPossivel = 50; // 5 perguntas x 10 pts (aprox, unidade 6 tem 3)
-    const scoreHtml = prog
-      ? `<div class="unit-score"><div class="pts">${prog.pontos}</div><div class="of">PTS</div></div>`
-      : `<div class="unit-score empty"><div class="pts">—</div><div class="of">A FAZER</div></div>`;
+    const isCurrent = !prog && i === doneCount;
+    let cls = tints[i % tints.length];
+    if(prog) cls = "done";
+    else if(isCurrent) cls = "solid-green wide";
+    const rightHtml = prog
+      ? (prog.coroa
+          ? `<div class="check" style="background:${CROWNS[prog.coroa].bg};color:${CROWNS[prog.coroa].color};" title="${CROWNS[prog.coroa].label}">👑</div>`
+          : `<div class="check">✓</div>`)
+      : `<div class="arrow-circle">→</div>`;
     return `
-      <div class="proof unit-card" data-id="${u.id}">
-        <div class="cm-bl"></div><div class="cm-br"></div>
-        <div class="unit-tag">U${String(u.ordem).padStart(2,"0")}</div>
-        <div class="unit-info">
+      <div class="unit-tile ${cls} fade-up" style="animation-delay:${i*0.05}s" data-id="${u.id}">
+        <div>
+          <div class="tag">UNIDADE ${String(u.ordem).padStart(2,"0")}</div>
           <div class="t">${u.titulo}</div>
-          <div class="d">${u.descricao || ""}</div>
+          ${prog ? `<div class="pts">${prog.pontos} pts</div>` : ""}
         </div>
-        ${scoreHtml}
+        ${rightHtml}
       </div>`;
+  }).join("");
+
+  const welcomeHtml = state.justLoggedIn ? `
+    <div class="welcome-banner">
+      ${mascotSVG(36, "happy")}
+      <div class="txt">Bem-vindo(a) de volta, ${(state.profile?.nome||"").split(" ")[0]}! Vamos treinar?</div>
+    </div>` : "";
+  state.justLoggedIn = false;
+
+  const badgesHtml = Object.keys(BADGES).map(key => {
+    const unlocked = medalhas.includes(key);
+    const b = BADGES[key];
+    return `<div class="badge-ico ${unlocked?'':'locked'}" title="${b.nome} — ${b.desc}">${b.icon}</div>`;
   }).join("");
 
   el.innerHTML = `
     ${topbar("dashboard")}
-    <div class="eyebrow" style="margin-bottom:10px;">OLÁ, ${(state.profile?.nome||"").toUpperCase()}</div>
-    ${cards || `<div class="empty-state">Nenhuma unidade cadastrada ainda.</div>`}
+    <div class="hero-wrap">
+      ${blobsBg()}
+      <div class="hero-inner">
+        ${welcomeHtml}
+        <div class="eyebrow" style="margin-bottom:10px;">OLÁ, ${(state.profile?.nome||"").toUpperCase()}</div>
+        <div class="gami-row">
+          <div class="gami-chip"><div class="v">🔥 ${streak}</div><div class="l">Sequência</div></div>
+          <div class="gami-chip"><div class="v">🏆 Nv.${lvl.level}</div><div class="l">Nível</div></div>
+          <div class="gami-chip"><div class="v">⭐ ${xp}</div><div class="l">XP total</div></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-size:11px;color:var(--text-dim);font-weight:700;">NÍVEL ${lvl.level}</span>
+          <span style="font-size:11px;color:var(--text-dim);font-weight:700;">${lvl.into}/100 XP</span>
+        </div>
+        <div class="xp-bar" style="margin-bottom:16px;"><div class="xp-bar-fill" id="xp-fill" style="width:0"></div></div>
+        <div class="badges-row">${badgesHtml}</div>
+      </div>
+    </div>
+    <div class="unit-grid">${tiles || `<div class="empty-state">Nenhuma unidade cadastrada ainda.</div>`}</div>
   `;
+  requestAnimationFrame(() => {
+    const fill = document.getElementById("xp-fill");
+    if(fill) fill.style.width = (lvl.pct*100) + "%";
+  });
   wireTopbar();
-  el.querySelectorAll(".unit-card").forEach(c => {
+  el.querySelectorAll(".unit-tile").forEach(c => {
     c.onclick = async () => {
       state.currentUnidade = state.unidades.find(u => u.id === c.dataset.id);
       state.view = "unit";
@@ -482,17 +1043,30 @@ function renderDashboard(){
 
 // ---------------- UNIT VIEW ----------------
 function renderUnit(){
+  if(state._unitScrollHandler){
+    window.removeEventListener("scroll", state._unitScrollHandler);
+    state._unitScrollHandler = null;
+  }
   const u = state.currentUnidade;
   const prog = state.progresso.find(p => p.unidade_id === u.id);
+  const bodyMd = u.conteudo.replace(/^#\s+.*\n+/, ""); // strip leading H1, we render the title in the badge header instead
   el.innerHTML = `
     ${topbar("dashboard")}
     <button class="backlink" id="back">← VOLTAR ÀS UNIDADES</button>
-    <div class="eyebrow">U${String(u.ordem).padStart(2,"0")}</div>
-    <div class="content">${mdToHtml(u.conteudo)}</div>
-    <button class="btn full" id="start-quiz">${prog ? "Refazer quiz — " + prog.pontos + " pts" : "Iniciar quiz"}</button>
+    <div class="unit-head">
+      <div class="unit-badge">U${String(u.ordem).padStart(2,"0")}</div>
+      <h1>${u.titulo}</h1>
+    </div>
+    <div class="content">${mdToHtml(bodyMd)}</div>
+    <button class="btn full cta" id="start-quiz">${prog ? "Refazer quiz — " + prog.pontos + " pts" : "Iniciar quiz"}</button>
+    ${floatingMascot("unit-mascot", "happy", "Vamos estudar essa unidade!")}
   `;
-  document.getElementById("back").onclick = () => { state.view="dashboard"; render(); };
+  document.getElementById("back").onclick = () => {
+    if(state._unitScrollHandler){ window.removeEventListener("scroll", state._unitScrollHandler); state._unitScrollHandler = null; }
+    state.view="dashboard"; render();
+  };
   document.getElementById("start-quiz").onclick = async () => {
+    if(state._unitScrollHandler){ window.removeEventListener("scroll", state._unitScrollHandler); state._unitScrollHandler = null; }
     const { data, error } = await sb.from("perguntas").select("*").eq("unidade_id", u.id).order("ordem");
     if(error || !data || !data.length){ alert("Não há perguntas cadastradas para essa unidade ainda."); return; }
     state.perguntas = data;
@@ -502,6 +1076,27 @@ function renderUnit(){
     state.view = "quiz";
     render();
   };
+  const readMessages = [
+    { at: 0, mood: "happy", msg: "Vamos estudar essa unidade!" },
+    { at: 0.3, mood: "happy", msg: "Boa, continua lendo!" },
+    { at: 0.7, mood: "happy", msg: "Quase lá, tá indo bem!" },
+    { at: 0.97, mood: "happy", msg: "Terminou! Bora pro quiz?" },
+  ];
+  let lastStep = -1;
+  const onScroll = () => {
+    const doc = document.documentElement;
+    const scrollable = doc.scrollHeight - window.innerHeight;
+    const pct = scrollable > 0 ? Math.min(1, window.scrollY / scrollable) : 1;
+    let step = 0;
+    readMessages.forEach((m,i) => { if(pct >= m.at) step = i; });
+    if(step !== lastStep){
+      lastStep = step;
+      const m = readMessages[step];
+      updateFloatingMascot("unit-mascot", m.mood, m.msg);
+    }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  state._unitScrollHandler = onScroll;
 }
 
 // ---------------- QUIZ VIEW ----------------
@@ -509,19 +1104,33 @@ function renderQuiz(){
   const total = state.perguntas.length;
   if(state.quizIndex >= total){
     const pontos = state.quizScore * 10;
+    const pct = total ? state.quizScore / total : 0;
+    const tier = pct === 1 ? "Perfeito! 🎯" : pct >= 0.7 ? "Mandou muito bem!" : pct >= 0.4 ? "Bom começo!" : "Vamos revisar de novo?";
+    const confetti = Array.from({length: 20}).map((_,i) =>
+      `<span class="confetti c${i % 6}" style="left:${(i * 5.2) % 100}%; animation-delay:${(i % 6) * 0.12}s"></span>`
+    ).join("");
+    const finalMood = pct >= 0.7 ? "happy" : "sad";
     el.innerHTML = `
+      <div class="confetti-wrap">${confetti}</div>
       ${topbar("dashboard")}
       <div class="proof summary"><div class="cm-bl"></div><div class="cm-br"></div>
         <div class="eyebrow">UNIDADE CONCLUÍDA</div>
         <div class="big">${state.quizScore}/${total}</div>
+        <div class="tier">${tier}</div>
         <div class="sub">${pontos} PONTOS NESTA TENTATIVA</div>
-        <button class="btn full" id="save-continue">Salvar e voltar às unidades</button>
+        <button class="btn full cta" id="save-continue">Salvar e voltar às unidades</button>
       </div>
+      ${floatingMascot("quiz-mascot", finalMood, pct >= 0.7 ? "Mandou bem, parabéns!" : "Dá uma revisada e tenta de novo!")}
     `;
+    if(pct === 1) unlockBadge("perfeito");
     document.getElementById("save-continue").onclick = async () => {
-      await salvarProgresso(pontos);
-      state.view = "dashboard";
-      render();
+      const coroaNova = await salvarProgresso(pontos);
+      if(coroaNova){
+        showCrownCelebration(coroaNova);
+      } else {
+        state.view = "dashboard";
+        render();
+      }
     };
     return;
   }
@@ -548,6 +1157,7 @@ function renderQuiz(){
     <div class="qfooter">
       <button class="btn" id="next-btn" style="display:none;">${state.quizIndex+1===total ? "Ver resultado" : "Próxima"}</button>
     </div>
+    ${floatingMascot("quiz-mascot", "happy", "Escolhe a alternativa certa!")}
   `;
 
   el.querySelectorAll(".opt").forEach(btn => {
@@ -564,7 +1174,8 @@ function renderQuiz(){
         else if(bi === i) b.classList.add("wrong");
       });
       const fb = document.getElementById("feedback");
-      fb.innerHTML = `<div class="feedback ${correct?'':'bad'}"><strong>${correct?'Certo!':'Não é bem assim.'}</strong> ${q.explicacao || ""}</div>`;
+      fb.innerHTML = `<div class="feedback ${correct?'':'bad'}"><strong>${correct?'Boa! 🎉':'Não é bem assim.'}</strong><div class="fb-text">${q.explicacao || ""}</div></div>`;
+      updateFloatingMascot("quiz-mascot", correct ? "happy" : "sad", correct ? "Boa! Manda a próxima." : "Vish, dá uma olhada na explicação.");
       document.getElementById("next-btn").style.display = "inline-block";
     };
   });
@@ -580,33 +1191,69 @@ async function salvarProgresso(pontosNovaTentativa){
   const u = state.currentUnidade;
   const existente = state.progresso.find(p => p.unidade_id === u.id);
   const melhor = existente ? Math.max(existente.pontos, pontosNovaTentativa) : pontosNovaTentativa;
+  const tentativaAtual = (existente?.tentativas || 0) + 1;
+  const total = state.perguntas.length;
+  const acertouTudo = total > 0 && state.quizScore === total;
+  let coroa = existente?.coroa || null;
+  let coroaNova = null;
+  if(acertouTudo && !coroa){
+    coroaNova = crownForAttempt(tentativaAtual);
+    if(coroaNova) coroa = coroaNova;
+  }
+  const payload = { pontos: melhor, concluido: true, tentativas: tentativaAtual, coroa, updated_at: new Date().toISOString() };
 
   if(existente){
-    await sb.from("progresso").update({ pontos: melhor, concluido: true, updated_at: new Date().toISOString() }).eq("id", existente.id);
+    await sb.from("progresso").update(payload).eq("id", existente.id);
   } else {
-    await sb.from("progresso").insert({ usuario_id: state.session.user.id, unidade_id: u.id, pontos: melhor, concluido: true });
+    await sb.from("progresso").insert({ usuario_id: state.session.user.id, unidade_id: u.id, ...payload });
   }
   await loadProgresso();
   const totalPontos = state.progresso.reduce((s,p) => s + p.pontos, 0);
   await sb.from("perfis").update({ pontos_total: totalPontos }).eq("id", state.session.user.id);
   state.profile.pontos_total = totalPontos;
+  checkAchievements();
+  return coroaNova;
 }
 
 // ---------------- RANKING VIEW ----------------
 function renderRanking(){
-  const rows = state.ranking.map((r,i) => `
-    <div class="rank-row ${i<3?'top':''}">
-      <div class="rank-pos">${i+1}</div>
+  const top3 = state.ranking.slice(0,3);
+  const rest = state.ranking.slice(3);
+  const podiumOrder = [1,0,2]; // display order: 2nd, 1st, 3rd
+  const initialsOf = (nome) => (nome||"").trim().split(/\s+/).map(s=>s[0]).slice(0,2).join("").toUpperCase();
+
+  const podiumHtml = top3.length ? `
+    <div class="podium">
+      ${podiumOrder.filter(i => top3[i]).map(i => {
+        const r = top3[i];
+        const place = i + 1;
+        const hClass = place === 1 ? "h1" : place === 2 ? "h2" : "h3";
+        return `
+          <div class="podium-col ${hClass}">
+            <div class="podium-avatar">${r.avatar || initialsOf(r.nome)}</div>
+            <div class="podium-name">${r.nome}</div>
+            <div class="podium-pts">${r.pontos_total || 0} pts</div>
+            <div class="podium-block">${place}</div>
+          </div>`;
+      }).join("")}
+    </div>` : "";
+
+  const restHtml = rest.map((r,i) => `
+    <div class="rank-row">
+      <div class="rank-pos">${i + 4}</div>
       <div class="rank-name">${r.nome}</div>
       <div class="rank-pts">${r.pontos_total || 0}</div>
     </div>
   `).join("");
+
   el.innerHTML = `
     ${topbar("ranking")}
     <div class="eyebrow" style="margin-bottom:12px;">RANKING GERAL</div>
-    <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
-      ${rows || `<div class="empty-state">Ninguém pontuou ainda.</div>`}
-    </div>
+    ${podiumHtml}
+    ${(rest.length || !top3.length) ? `
+      <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
+        ${restHtml || `<div class="empty-state">Ninguém pontuou ainda.</div>`}
+      </div>` : ""}
   `;
   wireTopbar();
 }
@@ -615,14 +1262,18 @@ function renderRanking(){
 function renderSetPassword(){
   el.innerHTML = `
     ${brandHeader()}
+    <div class="mascot-greet">
+      <div class="mascot-big">${mascotSVG(72, "happy")}</div>
+      <div class="mascot-bubble-big">Bem-vindo(a) à equipe! Só falta criar sua senha.</div>
+    </div>
     <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
-      <div class="eyebrow" style="margin-bottom:16px;">BEM-VINDO(A) — CRIE SUA SENHA</div>
+      <div class="eyebrow" style="margin-bottom:16px;">CRIE SUA SENHA</div>
       <div id="auth-error" class="error-msg" style="display:none;"></div>
       <label>Nova senha</label>
       <input type="password" id="f-pass1" placeholder="mínimo 6 caracteres" />
       <label>Confirmar senha</label>
       <input type="password" id="f-pass2" placeholder="repita a senha" />
-      <button class="btn full" id="btn-setpass">Definir senha e entrar</button>
+      <button class="btn full cta" id="btn-setpass">Definir senha e entrar</button>
     </div>
   `;
   const showErr = (msg) => { const e=document.getElementById("auth-error"); e.textContent=msg; e.style.display="block"; };
@@ -645,11 +1296,21 @@ function parseHashParams(){
 }
 
 // ---------------- BOOT ----------------
+function skeletonDashboard(){
+  return `
+    <div class="skel skel-chip" style="width:140px;height:20px;margin-bottom:18px;"></div>
+    <div class="skel-row"><div class="skel skel-chip"></div><div class="skel skel-chip"></div><div class="skel skel-chip"></div></div>
+    <div class="skel-row"><div class="skel skel-tile" style="flex:1"></div><div class="skel skel-tile" style="flex:1"></div></div>
+    <div class="skel-row"><div class="skel skel-tile" style="flex:1"></div><div class="skel skel-tile" style="flex:1"></div></div>
+  `;
+}
 async function boot(){
-  el.innerHTML = `<div class="loading">CARREGANDO…</div>`;
+  el.innerHTML = skeletonDashboard();
   await ensureProfile();
   await loadUnidades();
   await loadProgresso();
+  await updateStreak();
+  checkAchievements();
   state.view = "dashboard";
   render();
 }
