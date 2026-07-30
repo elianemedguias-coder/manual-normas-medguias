@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prova de Página — Manual de Normas MedGuias</title>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F5F8F6;
+    --surface:#FFFFFF;
+    --surface-2:#EEF4F1;
+    --line:#DEE6E1;
+    --green:#12805F;
+    --green-dark:#0C6A4D;
+    --green-tint:#E3F3EC;
+    --red:#D6402F;
+    --red-tint:#FBE7E4;
+    --text:#173226;
+    --text-dim:#5B6E64;
+    --text-faint:#93A69C;
+    --radius:14px;
+    --radius-sm:8px;
+    --shadow:0 2px 10px rgba(23,50,38,.06), 0 1px 2px rgba(23,50,38,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    line-height:1.5;
+  }
+  #app{max-width:720px;margin:0 auto;padding:32px 20px 80px;min-height:100vh;}
+  h1,h2,h3{font-family:'Baloo 2',sans-serif;margin:0;}
+  .mono{font-family:'Inter',sans-serif;}
+  .eyebrow{
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--green);
+  }
+  /* ---- card ---- */
+  .proof{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 22px;
+    margin-bottom:14px;
+    overflow:hidden;
+  }
+  .proof .cm-tl,.proof .cm-bl,.proof .cm-br{display:none;}
+  .proof::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:5px;
+    background:linear-gradient(90deg, var(--green) 0%, var(--green) 60%, var(--red) 60%, var(--red) 100%);
+  }
+
+  /* ---- header / logo mark ---- */
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
+  .logomark{width:32px;height:32px;position:relative;flex:none;}
+  .logomark .bar{position:absolute;background:var(--red);}
+  .logomark .h{width:32px;height:11px;top:11px;left:0;}
+  .logomark .v{width:11px;height:32px;top:0;left:11px;}
+  .logomark .flag{
+    position:absolute;top:11px;left:11px;width:16px;height:16px;
+    background:var(--green);
+    clip-path:polygon(0 0, 100% 0, 100% 100%);
+  }
+  .brand-text .title{font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+  .brand-text .sub{font-size:11px;color:var(--text-dim);font-weight:600;letter-spacing:.03em;}
+
+  button{font-family:'Inter',sans-serif;cursor:pointer;}
+  .btn{
+    background:var(--green);
+    color:#fff;
+    border:none;
+    padding:13px 22px;
+    font-weight:700;
+    font-size:14px;
+    border-radius:999px;
+    transition:background .15s ease, transform .1s ease;
+  }
+  .btn:hover{background:var(--green-dark);}
+  .btn:active{transform:scale(.98);}
+  .btn:disabled{opacity:.4;cursor:default;}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--text);}
+  .btn.ghost:hover{background:var(--surface-2);}
+  .btn.full{width:100%;}
+  .btn.danger-outline{background:transparent;border:1.5px solid var(--red);color:var(--red);}
+
+  input{
+    width:100%;
+    background:var(--surface-2);
+    border:1.5px solid var(--line);
+    color:var(--text);
+    padding:12px 14px;
+    font-size:14px;
+    border-radius:var(--radius-sm);
+    font-family:'Inter',sans-serif;
+    margin-bottom:12px;
+  }
+  input:focus{outline:2px solid var(--green);outline-offset:1px;}
+  label{font-size:12.5px;color:var(--text-dim);display:block;margin-bottom:6px;font-weight:600;}
+
+  .tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--line);}
+  .tab{padding:10px 4px;margin-right:24px;background:none;border:none;color:var(--text-dim);font-size:14px;font-weight:700;border-bottom:2px solid transparent;font-family:'Inter',sans-serif;}
+  .tab.active{color:var(--green);border-bottom-color:var(--green);}
+
+  .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;gap:10px;flex-wrap:wrap;}
+  .navbtn{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:700;letter-spacing:.01em;padding:6px 0;}
+  .navbtn:hover{color:var(--text);}
+  .navbtn.active{color:var(--green);}
+  .navgroup{display:flex;gap:20px;}
+
+  /* dashboard unit card */
+  .unit-card{display:flex;align-items:center;gap:16px;cursor:pointer;}
+  .unit-card:hover{box-shadow:0 4px 16px rgba(23,50,38,.1);}
+  .unit-tag{
+    font-size:12px;font-weight:800;color:var(--green);
+    background:var(--green-tint);
+    border-radius:999px;
+    padding:5px 11px;
+    flex:none;
+    white-space:nowrap;
+  }
+  .unit-info{flex:1;min-width:0;}
+  .unit-info .t{font-weight:700;font-size:15.5px;margin-bottom:2px;font-family:'Baloo 2',sans-serif;}
+  .unit-info .d{font-size:12.5px;color:var(--text-dim);}
+  .unit-score{flex:none;text-align:right;}
+  .unit-score .pts{font-size:16px;font-weight:800;color:var(--green);font-family:'Baloo 2',sans-serif;}
+  .unit-score .of{font-size:10px;color:var(--text-faint);font-weight:700;letter-spacing:.03em;}
+  .unit-score.empty .pts{color:var(--text-faint);}
+
+  /* content render */
+  .content h1{font-size:21px;margin:0 0 16px;color:var(--text);}
+  .content h2{font-size:15px;margin:22px 0 8px;color:var(--green);}
+  .content p{font-size:14px;color:#3C4E45;margin:0 0 12px;}
+  .content strong{color:var(--text);}
+  .content ul{margin:0 0 14px;padding-left:0;list-style:none;}
+  .content li{font-size:13.5px;color:#3C4E45;padding-left:22px;position:relative;margin-bottom:6px;}
+  .content li::before{content:'•';position:absolute;left:4px;color:var(--green);font-weight:700;}
+  .content code{
+    font-family:'Inter',monospace;
+    background:var(--green-tint);
+    padding:2px 7px;
+    font-size:12.5px;
+    color:var(--green-dark);
+    border-radius:5px;
+    font-weight:600;
+  }
+  .content table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:12.5px;border-radius:8px;overflow:hidden;}
+  .content th,.content td{text-align:left;padding:8px 10px;border:1px solid var(--line);}
+  .content th{color:var(--green-dark);background:var(--green-tint);font-weight:700;}
+
+  /* quiz */
+  .qprogress{display:flex;gap:4px;margin-bottom:22px;}
+  .qprogress i{flex:1;height:5px;background:var(--line);border-radius:3px;}
+  .qprogress i.done{background:var(--green);}
+  .qprogress i.wrong{background:var(--red);}
+  .qtext{font-size:18px;font-weight:700;margin-bottom:18px;line-height:1.4;font-family:'Baloo 2',sans-serif;color:var(--text);}
+  .opt{
+    display:block;width:100%;text-align:left;
+    background:var(--surface-2);
+    border:1.5px solid var(--line);
+    color:var(--text);
+    padding:14px 16px;
+    font-size:14px;
+    font-weight:500;
+    margin-bottom:9px;
+    border-radius:var(--radius-sm);
+    transition:border-color .15s, background .15s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--green);background:#fff;}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--green);background:var(--green-tint);color:var(--green-dark);font-weight:700;}
+  .opt.wrong{border-color:var(--red);background:var(--red-tint);color:var(--red);font-weight:700;}
+  .feedback{
+    margin-top:16px;padding:14px 16px;
+    background:var(--green-tint);border-left:4px solid var(--green);
+    border-radius:var(--radius-sm);
+    font-size:13.5px;color:#2C4A3B;
+  }
+  .feedback.bad{border-left-color:var(--red);background:var(--red-tint);color:#7A2A20;}
+  .qfooter{margin-top:20px;display:flex;justify-content:flex-end;}
+
+  .summary{text-align:center;padding:20px 0;}
+  .summary .big{font-family:'Baloo 2',sans-serif;font-size:46px;font-weight:800;color:var(--green);margin:14px 0 6px;}
+  .summary .sub{color:var(--text-dim);font-size:13px;margin-bottom:26px;font-weight:600;}
+
+  /* ranking */
+  .rank-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line);}
+  .rank-row:last-child{border-bottom:none;}
+  .rank-pos{font-size:14px;font-weight:800;color:var(--text-faint);width:26px;flex:none;text-align:center;}
+  .rank-row.top .rank-pos{color:#fff;background:var(--red);border-radius:50%;width:24px;height:24px;line-height:24px;font-size:12px;}
+  .rank-name{flex:1;font-size:14.5px;font-weight:600;}
+  .rank-pts{font-size:14.5px;color:var(--green);font-weight:800;font-family:'Baloo 2',sans-serif;}
+
+  .empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13.5px;}
+  .error-msg{color:var(--red);font-size:13px;margin:-4px 0 12px;font-weight:600;}
+  .loading{text-align:center;padding:60px 0;color:var(--text-dim);font-weight:700;font-size:13px;letter-spacing:.03em;}
+  .backlink{background:none;border:none;color:var(--text-dim);font-size:13px;font-weight:700;margin-bottom:18px;padding:0;}
+  .backlink:hover{color:var(--green);}
+</style>
+</head>
+<body>
+<div id="app"><div class="loading">CARREGANDO…</div></div>
+
+<script>
+const SUPABASE_URL = "https://cztlkgyyibcwbvodwvzs.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN6dGxrZ3l5aWJjd2J2b2R3dnpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUxMzU1NzYsImV4cCI6MjEwMDcxMTU3Nn0.8cK_8ihVfpQDilsDnyJJtPSrazuxxfmP_j7MekTaxro";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const state = {
+  session: null,
+  profile: null,
+  view: "loading", // loading | auth | dashboard | unit | quiz | ranking
+  authTab: "login",
+  unidades: [],
+  progresso: [],
+  currentUnidade: null,
+  perguntas: [],
+  quizIndex: 0,
+  quizScore: 0,
+  answered: null, // index selected for current question
+  ranking: [],
+};
+
+const el = document.getElementById("app");
+
+// ---------------- tiny markdown renderer ----------------
+function mdToHtml(md){
+  const lines = md.split("\n");
+  let html = "";
+  let inList = false, inTable = false, tableRows = [];
+  const inline = (s) => s
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>");
+  const closeList = () => { if(inList){ html += "</ul>"; inList=false; } };
+  const closeTable = () => {
+    if(inTable){
+      const [header, ...rows] = tableRows;
+      html += "<table><thead><tr>" + header.map(c=>`<th>${inline(c)}</th>`).join("") + "</tr></thead><tbody>";
+      rows.forEach(r => { html += "<tr>" + r.map(c=>`<td>${inline(c)}</td>`).join("") + "</tr>"; });
+      html += "</tbody></table>";
+      inTable = false; tableRows = [];
+    }
+  };
+  for(let raw of lines){
+    const line = raw.trim();
+    if(line === ""){ closeList(); closeTable(); continue; }
+    if(line.startsWith("# ")){ closeList(); closeTable(); html += `<h1>${inline(line.slice(2))}</h1>`; continue; }
+    if(line.startsWith("## ")){ closeList(); closeTable(); html += `<h2>${inline(line.slice(3))}</h2>`; continue; }
+    if(line.startsWith("|")){
+      if(/^\|[\s-:|]+\|$/.test(line)){ continue; } // separator row
+      closeList();
+      const cells = line.split("|").slice(1,-1).map(c=>c.trim());
+      tableRows.push(cells); inTable = true; continue;
+    }
+    closeTable();
+    if(line.startsWith("- ") || line.startsWith("✅") || line.startsWith("❌")){
+      if(!inList){ html += "<ul>"; inList = true; }
+      html += `<li>${inline(line.startsWith("- ") ? line.slice(2) : line)}</li>`;
+      continue;
+    }
+    closeList();
+    html += `<p>${inline(line)}</p>`;
+  }
+  closeList(); closeTable();
+  return html;
+}
+
+// ---------------- data helpers ----------------
+async function loadUnidades(){
+  const { data, error } = await sb.from("unidades").select("*").order("ordem");
+  if(!error) state.unidades = data || [];
+}
+async function loadProgresso(){
+  const { data, error } = await sb.from("progresso").select("*").eq("usuario_id", state.session.user.id);
+  if(!error) state.progresso = data || [];
+}
+async function loadRanking(){
+  const { data, error } = await sb.from("perfis").select("nome,pontos_total").order("pontos_total",{ascending:false}).limit(50);
+  if(!error) state.ranking = data || [];
+}
+async function ensureProfile(){
+  const { data } = await sb.from("perfis").select("*").eq("id", state.session.user.id).maybeSingle();
+  if(data){ state.profile = data; return; }
+  const nome = state.session.user.user_metadata?.nome || state.session.user.email.split("@")[0];
+  const { data: created } = await sb.from("perfis").insert({ id: state.session.user.id, nome }).select().single();
+  state.profile = created;
+}
+
+// ---------------- render root ----------------
+async function render(){
+  if(state.view === "auth") return renderAuth();
+  if(state.view === "set-password") return renderSetPassword();
+  if(state.view === "dashboard") return renderDashboard();
+  if(state.view === "unit") return renderUnit();
+  if(state.view === "quiz") return renderQuiz();
+  if(state.view === "ranking") return renderRanking();
+  el.innerHTML = `<div class="loading">CARREGANDO…</div>`;
+}
+
+function brandHeader(){
+  return `
+  <div class="brand">
+    <div class="logomark">
+      <div class="bar h"></div>
+      <div class="bar v"></div>
+      <div class="flag"></div>
+    </div>
+    <div class="brand-text">
+      <div class="title">Prova de Página</div>
+      <div class="sub">MANUAL DE NORMAS · IMPRESSOS MEDGUIAS</div>
+    </div>
+  </div>`;
+}
+
+// ---------------- AUTH VIEW ----------------
+function renderAuth(){
+  el.innerHTML = `
+    ${brandHeader()}
+    <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
+      <div class="eyebrow" style="margin-bottom:16px;">ACESSO RESTRITO À EQUIPE</div>
+      <div id="auth-error" class="error-msg" style="display:none;"></div>
+      <label>Email</label>
+      <input type="email" id="f-email" placeholder="voce@medguias.com.br" />
+      <label>Senha</label>
+      <input type="password" id="f-pass" placeholder="••••••••" />
+      <button class="btn full" id="btn-login">Entrar</button>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-faint);">Não tem conta? Peça ao responsável pelo manual para criar a sua.</div>
+    </div>
+  `;
+  const showErr = (msg) => { const e=document.getElementById("auth-error"); e.textContent=msg; e.style.display="block"; };
+  document.getElementById("btn-login").onclick = async () => {
+    const email = document.getElementById("f-email").value.trim();
+    const password = document.getElementById("f-pass").value;
+    if(!email || !password) return showErr("Preencha email e senha.");
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error) return showErr(traduzErro(error.message));
+    state.session = data.session;
+    await boot();
+  };
+}
+function traduzErro(msg){
+  if(/already registered/i.test(msg)) return "Esse email já tem uma conta. Tente entrar.";
+  if(/invalid login credentials/i.test(msg)) return "Email ou senha incorretos.";
+  if(/password/i.test(msg)) return "Senha inválida (mínimo 6 caracteres).";
+  return msg;
+}
+
+// ---------------- TOPBAR (logged-in views) ----------------
+function topbar(active){
+  return `
+  <div class="topbar">
+    ${brandHeader()}
+    <div class="navgroup">
+      <button class="navbtn ${active==='dashboard'?'active':''}" id="nav-dash">UNIDADES</button>
+      <button class="navbtn ${active==='ranking'?'active':''}" id="nav-rank">RANKING</button>
+      <button class="navbtn" id="nav-out">SAIR</button>
+    </div>
+  </div>`;
+}
+function wireTopbar(){
+  document.getElementById("nav-dash").onclick = () => { state.view="dashboard"; render(); };
+  document.getElementById("nav-rank").onclick = async () => { await loadRanking(); state.view="ranking"; render(); };
+  document.getElementById("nav-out").onclick = async () => { await sb.auth.signOut(); location.reload(); };
+}
+
+// ---------------- DASHBOARD ----------------
+function renderDashboard(){
+  const cards = state.unidades.map(u => {
+    const prog = state.progresso.find(p => p.unidade_id === u.id);
+    const totalPossivel = 50; // 5 perguntas x 10 pts (aprox, unidade 6 tem 3)
+    const scoreHtml = prog
+      ? `<div class="unit-score"><div class="pts">${prog.pontos}</div><div class="of">PTS</div></div>`
+      : `<div class="unit-score empty"><div class="pts">—</div><div class="of">A FAZER</div></div>`;
+    return `
+      <div class="proof unit-card" data-id="${u.id}">
+        <div class="cm-bl"></div><div class="cm-br"></div>
+        <div class="unit-tag">U${String(u.ordem).padStart(2,"0")}</div>
+        <div class="unit-info">
+          <div class="t">${u.titulo}</div>
+          <div class="d">${u.descricao || ""}</div>
+        </div>
+        ${scoreHtml}
+      </div>`;
+  }).join("");
+
+  el.innerHTML = `
+    ${topbar("dashboard")}
+    <div class="eyebrow" style="margin-bottom:10px;">OLÁ, ${(state.profile?.nome||"").toUpperCase()}</div>
+    ${cards || `<div class="empty-state">Nenhuma unidade cadastrada ainda.</div>`}
+  `;
+  wireTopbar();
+  el.querySelectorAll(".unit-card").forEach(c => {
+    c.onclick = async () => {
+      state.currentUnidade = state.unidades.find(u => u.id === c.dataset.id);
+      state.view = "unit";
+      render();
+    };
+  });
+}
+
+// ---------------- UNIT VIEW ----------------
+function renderUnit(){
+  const u = state.currentUnidade;
+  const prog = state.progresso.find(p => p.unidade_id === u.id);
+  el.innerHTML = `
+    ${topbar("dashboard")}
+    <button class="backlink" id="back">← VOLTAR ÀS UNIDADES</button>
+    <div class="eyebrow">U${String(u.ordem).padStart(2,"0")}</div>
+    <div class="content">${mdToHtml(u.conteudo)}</div>
+    <button class="btn full" id="start-quiz">${prog ? "Refazer quiz — " + prog.pontos + " pts" : "Iniciar quiz"}</button>
+  `;
+  document.getElementById("back").onclick = () => { state.view="dashboard"; render(); };
+  document.getElementById("start-quiz").onclick = async () => {
+    const { data, error } = await sb.from("perguntas").select("*").eq("unidade_id", u.id).order("ordem");
+    if(error || !data || !data.length){ alert("Não há perguntas cadastradas para essa unidade ainda."); return; }
+    state.perguntas = data;
+    state.quizIndex = 0;
+    state.quizScore = 0;
+    state.answered = null;
+    state.view = "quiz";
+    render();
+  };
+}
+
+// ---------------- QUIZ VIEW ----------------
+function renderQuiz(){
+  const total = state.perguntas.length;
+  if(state.quizIndex >= total){
+    const pontos = state.quizScore * 10;
+    el.innerHTML = `
+      ${topbar("dashboard")}
+      <div class="proof summary"><div class="cm-bl"></div><div class="cm-br"></div>
+        <div class="eyebrow">UNIDADE CONCLUÍDA</div>
+        <div class="big">${state.quizScore}/${total}</div>
+        <div class="sub">${pontos} PONTOS NESTA TENTATIVA</div>
+        <button class="btn full" id="save-continue">Salvar e voltar às unidades</button>
+      </div>
+    `;
+    document.getElementById("save-continue").onclick = async () => {
+      await salvarProgresso(pontos);
+      state.view = "dashboard";
+      render();
+    };
+    return;
+  }
+
+  const q = state.perguntas[state.quizIndex];
+  const alts = typeof q.alternativas === "string" ? JSON.parse(q.alternativas) : q.alternativas;
+  const answered = state.answered;
+
+  el.innerHTML = `
+    ${topbar("dashboard")}
+    <div class="qprogress">
+      ${state.perguntas.map((_,i) => {
+        let cls = "";
+        if(i < state.quizIndex) cls = "done";
+        return `<i class="${cls}"></i>`;
+      }).join("")}
+    </div>
+    <div class="eyebrow">PERGUNTA ${state.quizIndex+1} DE ${total}</div>
+    <div class="qtext">${q.pergunta}</div>
+    <div id="opts">
+      ${alts.map((a,i) => `<button class="opt" data-i="${i}">${a}</button>`).join("")}
+    </div>
+    <div id="feedback"></div>
+    <div class="qfooter">
+      <button class="btn" id="next-btn" style="display:none;">${state.quizIndex+1===total ? "Ver resultado" : "Próxima"}</button>
+    </div>
+  `;
+
+  el.querySelectorAll(".opt").forEach(btn => {
+    btn.onclick = () => {
+      if(state.answered !== null) return;
+      const i = parseInt(btn.dataset.i);
+      state.answered = i;
+      const correct = i === q.resposta_correta;
+      if(correct) state.quizScore++;
+      el.querySelectorAll(".opt").forEach(b => {
+        b.disabled = true;
+        const bi = parseInt(b.dataset.i);
+        if(bi === q.resposta_correta) b.classList.add("correct");
+        else if(bi === i) b.classList.add("wrong");
+      });
+      const fb = document.getElementById("feedback");
+      fb.innerHTML = `<div class="feedback ${correct?'':'bad'}"><strong>${correct?'Certo!':'Não é bem assim.'}</strong> ${q.explicacao || ""}</div>`;
+      document.getElementById("next-btn").style.display = "inline-block";
+    };
+  });
+
+  document.getElementById("next-btn").onclick = () => {
+    state.quizIndex++;
+    state.answered = null;
+    render();
+  };
+}
+
+async function salvarProgresso(pontosNovaTentativa){
+  const u = state.currentUnidade;
+  const existente = state.progresso.find(p => p.unidade_id === u.id);
+  const melhor = existente ? Math.max(existente.pontos, pontosNovaTentativa) : pontosNovaTentativa;
+
+  if(existente){
+    await sb.from("progresso").update({ pontos: melhor, concluido: true, updated_at: new Date().toISOString() }).eq("id", existente.id);
+  } else {
+    await sb.from("progresso").insert({ usuario_id: state.session.user.id, unidade_id: u.id, pontos: melhor, concluido: true });
+  }
+  await loadProgresso();
+  const totalPontos = state.progresso.reduce((s,p) => s + p.pontos, 0);
+  await sb.from("perfis").update({ pontos_total: totalPontos }).eq("id", state.session.user.id);
+  state.profile.pontos_total = totalPontos;
+}
+
+// ---------------- RANKING VIEW ----------------
+function renderRanking(){
+  const rows = state.ranking.map((r,i) => `
+    <div class="rank-row ${i<3?'top':''}">
+      <div class="rank-pos">${i+1}</div>
+      <div class="rank-name">${r.nome}</div>
+      <div class="rank-pts">${r.pontos_total || 0}</div>
+    </div>
+  `).join("");
+  el.innerHTML = `
+    ${topbar("ranking")}
+    <div class="eyebrow" style="margin-bottom:12px;">RANKING GERAL</div>
+    <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
+      ${rows || `<div class="empty-state">Ninguém pontuou ainda.</div>`}
+    </div>
+  `;
+  wireTopbar();
+}
+
+// ---------------- SET PASSWORD VIEW (invite / recovery link) ----------------
+function renderSetPassword(){
+  el.innerHTML = `
+    ${brandHeader()}
+    <div class="proof"><div class="cm-bl"></div><div class="cm-br"></div>
+      <div class="eyebrow" style="margin-bottom:16px;">BEM-VINDO(A) — CRIE SUA SENHA</div>
+      <div id="auth-error" class="error-msg" style="display:none;"></div>
+      <label>Nova senha</label>
+      <input type="password" id="f-pass1" placeholder="mínimo 6 caracteres" />
+      <label>Confirmar senha</label>
+      <input type="password" id="f-pass2" placeholder="repita a senha" />
+      <button class="btn full" id="btn-setpass">Definir senha e entrar</button>
+    </div>
+  `;
+  const showErr = (msg) => { const e=document.getElementById("auth-error"); e.textContent=msg; e.style.display="block"; };
+  document.getElementById("btn-setpass").onclick = async () => {
+    const p1 = document.getElementById("f-pass1").value;
+    const p2 = document.getElementById("f-pass2").value;
+    if(p1.length < 6) return showErr("A senha precisa ter pelo menos 6 caracteres.");
+    if(p1 !== p2) return showErr("As senhas não conferem.");
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if(error) return showErr(traduzErro(error.message));
+    history.replaceState(null, "", window.location.pathname);
+    await boot();
+  };
+}
+
+function parseHashParams(){
+  const hash = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : window.location.hash;
+  const params = new URLSearchParams(hash);
+  return { type: params.get("type"), hasToken: params.has("access_token") };
+}
+
+// ---------------- BOOT ----------------
+async function boot(){
+  el.innerHTML = `<div class="loading">CARREGANDO…</div>`;
+  await ensureProfile();
+  await loadUnidades();
+  await loadProgresso();
+  state.view = "dashboard";
+  render();
+}
+
+async function init(){
+  const { type, hasToken } = parseHashParams();
+  const { data } = await sb.auth.getSession();
+  if(data.session && hasToken && (type === "invite" || type === "recovery")){
+    state.session = data.session;
+    state.view = "set-password";
+    render();
+    return;
+  }
+  if(data.session){
+    state.session = data.session;
+    await boot();
+  } else {
+    state.view = "auth";
+    render();
+  }
+}
+init();
+</script>
+</body>
+</html>
