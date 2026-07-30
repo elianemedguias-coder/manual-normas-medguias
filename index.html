@@ -157,6 +157,27 @@
   .content table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:12.5px;border-radius:8px;overflow:hidden;}
   .content th,.content td{text-align:left;padding:8px 10px;border:1px solid var(--line);}
   .content th{color:var(--green-dark);background:var(--green-tint);font-weight:700;}
+  .content .callout{
+    background:var(--red-tint);border-left:4px solid var(--red);
+    padding:12px 14px;border-radius:8px;font-size:13.5px;
+    margin:0 0 14px;color:#7A2A20;font-weight:600;
+  }
+  .content details.example{
+    background:var(--green-tint);border:1px solid var(--line);
+    border-radius:var(--radius-sm);margin:0 0 14px;padding:12px 14px;
+  }
+  .content details.example summary{
+    cursor:pointer;font-weight:700;color:var(--green-dark);font-size:13.5px;
+    list-style:none;
+  }
+  .content details.example summary::-webkit-details-marker{display:none;}
+  .content details.example summary::before{content:'▸  ';color:var(--green);}
+  .content details.example[open] summary::before{content:'▾  ';}
+  .content details.example .example-body{margin-top:10px;}
+  .content details.example .example-body p{margin:0 0 8px;font-size:13px;color:#2C4A3B;}
+  .content details.example .example-body ul{margin:0 0 8px;}
+  .content details.example .example-body li{color:#2C4A3B;}
+  .content-img{width:100%;border-radius:10px;border:1px solid var(--line);display:block;margin:0 0 10px;}
 
   /* quiz */
   .qprogress{display:flex;gap:4px;margin-bottom:22px;}
@@ -238,6 +259,7 @@ function mdToHtml(md){
   const lines = md.split("\n");
   let html = "";
   let inList = false, inTable = false, tableRows = [];
+  let inExample = false, exampleTitle = "", exampleBuf = [];
   const inline = (s) => s
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
@@ -252,9 +274,52 @@ function mdToHtml(md){
       inTable = false; tableRows = [];
     }
   };
+  const closeExample = () => {
+    if(inExample){
+      html += `<details class="example"><summary>${inline(exampleTitle)}</summary><div class="example-body">`;
+      let listOpen = false;
+      exampleBuf.forEach(l => {
+        const t = l.trim();
+        if(t === ""){ if(listOpen){ html+="</ul>"; listOpen=false; } return; }
+        const imgMatch = t.match(/^!\[(.*?)\]\((.*?)\)$/);
+        if(imgMatch){
+          if(listOpen){ html+="</ul>"; listOpen=false; }
+          html += `<img class="content-img" src="${imgMatch[2]}" alt="${imgMatch[1].replace(/"/g,'&quot;')}" loading="lazy" />`;
+          return;
+        }
+        if(t.startsWith("- ") || t.startsWith("✅") || t.startsWith("❌")){
+          if(!listOpen){ html+="<ul>"; listOpen=true; }
+          html += `<li>${inline(t.startsWith("- ") ? t.slice(2) : t)}</li>`;
+        } else {
+          if(listOpen){ html+="</ul>"; listOpen=false; }
+          html += `<p>${inline(t)}</p>`;
+        }
+      });
+      if(listOpen) html += "</ul>";
+      html += `</div></details>`;
+      inExample = false; exampleTitle = ""; exampleBuf = [];
+    }
+  };
   for(let raw of lines){
     const line = raw.trim();
+    if(inExample){
+      if(line === "::"){ closeExample(); continue; }
+      exampleBuf.push(raw);
+      continue;
+    }
     if(line === ""){ closeList(); closeTable(); continue; }
+    if(line.startsWith("::exemplo ")){
+      closeList(); closeTable();
+      inExample = true;
+      exampleTitle = line.slice(10).trim();
+      exampleBuf = [];
+      continue;
+    }
+    if(line.startsWith("!! ")){
+      closeList(); closeTable();
+      html += `<div class="callout">${inline(line.slice(3))}</div>`;
+      continue;
+    }
     if(line.startsWith("# ")){ closeList(); closeTable(); html += `<h1>${inline(line.slice(2))}</h1>`; continue; }
     if(line.startsWith("## ")){ closeList(); closeTable(); html += `<h2>${inline(line.slice(3))}</h2>`; continue; }
     if(line.startsWith("|")){
@@ -264,6 +329,12 @@ function mdToHtml(md){
       tableRows.push(cells); inTable = true; continue;
     }
     closeTable();
+    const imgMatch = line.match(/^!\[(.*?)\]\((.*?)\)$/);
+    if(imgMatch){
+      closeList();
+      html += `<img class="content-img" src="${imgMatch[2]}" alt="${imgMatch[1].replace(/"/g,'&quot;')}" loading="lazy" />`;
+      continue;
+    }
     if(line.startsWith("- ") || line.startsWith("✅") || line.startsWith("❌")){
       if(!inList){ html += "<ul>"; inList = true; }
       html += `<li>${inline(line.startsWith("- ") ? line.slice(2) : line)}</li>`;
@@ -272,7 +343,7 @@ function mdToHtml(md){
     closeList();
     html += `<p>${inline(line)}</p>`;
   }
-  closeList(); closeTable();
+  closeList(); closeTable(); closeExample();
   return html;
 }
 
