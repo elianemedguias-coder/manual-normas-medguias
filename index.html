@@ -822,6 +822,7 @@ async function render(){
   else if(state.view === "unit") renderUnit();
   else if(state.view === "quiz") renderQuiz();
   else if(state.view === "ranking") renderRanking();
+  else if(state.view === "rules") renderRules();
   else { el.innerHTML = `<div class="loading">CARREGANDO…</div>`; return; }
   wireRipple(el);
 }
@@ -949,6 +950,7 @@ function topbar(active){
     <div class="navgroup">
       <button class="navbtn ${active==='dashboard'?'active':''}" id="nav-dash">UNIDADES</button>
       <button class="navbtn ${active==='ranking'?'active':''}" id="nav-rank">RANKING</button>
+      <button class="navbtn ${active==='rules'?'active':''}" id="nav-rules">REGRAS</button>
       <div class="avatar-circle" id="avatar-btn" title="Trocar avatar">${avatarContent}${crownBadge}</div>
       <button class="navbtn pill-out" id="nav-out">SAIR</button>
     </div>
@@ -957,6 +959,7 @@ function topbar(active){
 function wireTopbar(){
   document.getElementById("nav-dash").onclick = () => { state.view="dashboard"; render(); };
   document.getElementById("nav-rank").onclick = async () => { await loadRanking(); state.view="ranking"; render(); };
+  document.getElementById("nav-rules").onclick = () => { state.view="rules"; render(); };
   document.getElementById("nav-out").onclick = async () => { await sb.auth.signOut(); location.reload(); };
   document.getElementById("avatar-btn").onclick = openAvatarPicker;
 }
@@ -1189,12 +1192,23 @@ function renderQuiz(){
 
 async function salvarProgresso(pontosNovaTentativa){
   const u = state.currentUnidade;
-  const existente = state.progresso.find(p => p.unidade_id === u.id);
-  const melhor = existente ? Math.max(existente.pontos, pontosNovaTentativa) : pontosNovaTentativa;
-  const tentativaAtual = (existente?.tentativas || 0) + 1;
+  // Busca o registro mais recente direto do banco — nunca decide a coroa
+  // com base em cache local, pra não repetir o bug de "esquecer" tentativas.
+  const { data: atual, error: fetchErr } = await sb.from("progresso")
+    .select("*")
+    .eq("usuario_id", state.session.user.id)
+    .eq("unidade_id", u.id)
+    .maybeSingle();
+  if(fetchErr){
+    alert("Não consegui conferir seu progresso anterior dessa unidade. Tente salvar de novo em instantes.\n\nDetalhe técnico: " + fetchErr.message);
+    return null;
+  }
+
+  const melhor = atual ? Math.max(atual.pontos, pontosNovaTentativa) : pontosNovaTentativa;
+  const tentativaAtual = (atual?.tentativas || 0) + 1;
   const total = state.perguntas.length;
   const acertouTudo = total > 0 && state.quizScore === total;
-  let coroa = existente?.coroa || null;
+  let coroa = atual?.coroa || null; // uma vez definida, nunca é sobrescrita
   let coroaNova = null;
   if(acertouTudo && !coroa){
     coroaNova = crownForAttempt(tentativaAtual);
@@ -1202,14 +1216,25 @@ async function salvarProgresso(pontosNovaTentativa){
   }
   const payload = { pontos: melhor, concluido: true, tentativas: tentativaAtual, coroa, updated_at: new Date().toISOString() };
 
-  if(existente){
-    await sb.from("progresso").update(payload).eq("id", existente.id);
+  let saveErr;
+  if(atual){
+    const { error } = await sb.from("progresso").update(payload).eq("id", atual.id);
+    saveErr = error;
   } else {
-    await sb.from("progresso").insert({ usuario_id: state.session.user.id, unidade_id: u.id, ...payload });
+    const { error } = await sb.from("progresso").insert({ usuario_id: state.session.user.id, unidade_id: u.id, ...payload });
+    saveErr = error;
   }
+  if(saveErr){
+    alert("Seu progresso NÃO foi salvo por causa de um erro. Tente novamente antes de sair da página.\n\nDetalhe técnico: " + saveErr.message);
+    return null;
+  }
+
   await loadProgresso();
   const totalPontos = state.progresso.reduce((s,p) => s + p.pontos, 0);
-  await sb.from("perfis").update({ pontos_total: totalPontos }).eq("id", state.session.user.id);
+  const { error: perfilErr } = await sb.from("perfis").update({ pontos_total: totalPontos }).eq("id", state.session.user.id);
+  if(perfilErr){
+    alert("Seus pontos totais podem não ter sido atualizados corretamente. Recarregue a página pra conferir.\n\nDetalhe técnico: " + perfilErr.message);
+  }
   state.profile.pontos_total = totalPontos;
   checkAchievements();
   return coroaNova;
@@ -1258,7 +1283,82 @@ function renderRanking(){
   wireTopbar();
 }
 
-// ---------------- SET PASSWORD VIEW (invite / recovery link) ----------------
+// ---------------- RULES / HOW IT WORKS VIEW ----------------
+function renderRules(){
+  const badgesHtml = Object.keys(BADGES).map(key => {
+    const b = BADGES[key];
+    return `
+      <div class="proof" style="display:flex;align-items:center;gap:14px;">
+        <div class="badge-ico" style="width:44px;height:44px;font-size:20px;flex:none;">${b.icon}</div>
+        <div>
+          <div style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;">${b.nome}</div>
+          <div style="font-size:12.5px;color:var(--text-dim);">${b.desc}</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  const crownsHtml = CROWN_ORDER.map((key) => {
+    const c = CROWNS[key];
+    return `
+      <div class="proof" style="display:flex;align-items:center;gap:14px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:${c.bg};color:${c.color};display:flex;align-items:center;justify-content:center;font-size:20px;flex:none;">👑</div>
+        <div>
+          <div style="font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;">${c.label}</div>
+          <div style="font-size:12.5px;color:var(--text-dim);">Gabaritou o quiz na ${c.ordinal} tentativa</div>
+        </div>
+      </div>`;
+  }).join("");
+
+  el.innerHTML = `
+    ${topbar("rules")}
+    <div class="eyebrow" style="margin-bottom:6px;">COMO FUNCIONA</div>
+    <h1 style="font-family:'Baloo 2',sans-serif;font-size:22px;margin:0 0 20px;color:var(--text);">As regras do jogo 🎮</h1>
+
+    <div class="proof">
+      <div class="cm-bl"></div><div class="cm-br"></div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;">⭐ Pontos (XP)</div>
+      <p style="font-size:13.5px;color:#3C4E45;line-height:1.6;margin:0 0 8px;">
+        Cada pergunta que você acerta no quiz vale <strong>10 pontos</strong>. Se você refizer o quiz de uma unidade, vale a <strong>sua melhor tentativa</strong> — nunca piora.
+      </p>
+      <p style="font-size:13.5px;color:#3C4E45;line-height:1.6;margin:0;">
+        Errar uma pergunta não tira pontos — você só não ganha aqueles 10 daquela pergunta.
+      </p>
+    </div>
+
+    <div class="proof">
+      <div class="cm-bl"></div><div class="cm-br"></div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;">🏆 Nível</div>
+      <p style="font-size:13.5px;color:#3C4E45;line-height:1.6;margin:0;">
+        A cada <strong>100 pontos</strong>, você sobe um nível. Quanto mais unidades forem adicionadas ao manual, mais alto dá pra subir!
+      </p>
+    </div>
+
+    <div class="proof">
+      <div class="cm-bl"></div><div class="cm-br"></div>
+      <div style="font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;margin-bottom:8px;">🔥 Sequência</div>
+      <p style="font-size:13.5px;color:#3C4E45;line-height:1.6;margin:0;">
+        Mostra quantos dias seguidos você entrou no app. Se pular um dia, a sequência volta pra 1 — então vale a pena dar uma olhadinha todo dia!
+      </p>
+    </div>
+
+    <div class="eyebrow" style="margin:26px 0 10px;">🎯 CONQUISTAS</div>
+    ${badgesHtml}
+
+    <div class="eyebrow" style="margin:26px 0 10px;">👑 COROAS POR UNIDADE</div>
+    <p style="font-size:13px;color:var(--text-dim);margin:0 0 14px;">
+      Se você gabaritar (100%) o quiz de uma unidade, ganha uma coroa — o valor dela depende de em qual tentativa você conseguiu:
+    </p>
+    ${crownsHtml}
+
+    <div class="proof" style="margin-top:8px;">
+      <div class="cm-bl"></div><div class="cm-br"></div>
+      <p style="font-size:12.5px;color:var(--text-dim);margin:0;">
+        Conquistas e coroas são só reconhecimento visual — não valem pontos extras. O ranking geral é sempre pelos pontos (XP) somados.
+      </p>
+    </div>
+  `;
+  wireTopbar();
+}
 function renderSetPassword(){
   el.innerHTML = `
     ${brandHeader()}
