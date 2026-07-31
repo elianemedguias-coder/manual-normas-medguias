@@ -292,6 +292,8 @@
   .rank-pos{font-size:14px;font-weight:800;color:var(--text-faint);width:26px;flex:none;text-align:center;}
   .rank-row.top .rank-pos{color:#fff;background:var(--red);border-radius:50%;width:24px;height:24px;line-height:24px;font-size:12px;}
   .rank-name{flex:1;font-size:14.5px;font-weight:600;}
+  .rank-crowns{font-size:11.5px;font-weight:600;margin-top:2px;color:var(--text-dim);letter-spacing:.02em;}
+  .podium-col .rank-crowns{margin:0 0 4px;justify-content:center;}
   .rank-pts{font-size:14.5px;color:var(--green);font-weight:800;font-family:'Poppins',sans-serif;}
 
   .empty-state{text-align:center;padding:40px 20px;color:var(--text-dim);font-size:13.5px;}
@@ -803,8 +805,33 @@ async function loadProgresso(){
   if(!error) state.progresso = data || [];
 }
 async function loadRanking(){
-  const { data, error } = await sb.from("perfis").select("nome,pontos_total,avatar").order("pontos_total",{ascending:false}).limit(50);
-  if(!error) state.ranking = data || [];
+  const { data, error } = await sb.from("perfis").select("id,nome,pontos_total,avatar").order("pontos_total",{ascending:false}).limit(50);
+  if(error){ state.ranking = []; return; }
+  state.ranking = data || [];
+
+  const ids = state.ranking.map(r => r.id);
+  if(ids.length){
+    const { data: coroasData, error: coroasErr } = await sb.from("progresso")
+      .select("usuario_id,coroa")
+      .in("usuario_id", ids)
+      .not("coroa", "is", null);
+    if(!coroasErr){
+      const counts = {};
+      (coroasData || []).forEach(row => {
+        if(!counts[row.usuario_id]) counts[row.usuario_id] = {};
+        counts[row.usuario_id][row.coroa] = (counts[row.usuario_id][row.coroa] || 0) + 1;
+      });
+      state.ranking = state.ranking.map(r => ({ ...r, crownCounts: counts[r.id] || {} }));
+    }
+  }
+}
+const CROWN_EMOJI = { diamante: "💎", ouro: "👑", prata: "🥈", bronze: "🥉" };
+function crownSummaryHtml(counts){
+  if(!counts) return "";
+  const parts = CROWN_ORDER.filter(k => counts[k]).map(k =>
+    `<span title="${CROWNS[k].label}">${CROWN_EMOJI[k]}${counts[k] > 1 ? "×" + counts[k] : ""}</span>`
+  );
+  return parts.length ? `<div class="rank-crowns">${parts.join(" ")}</div>` : "";
 }
 async function ensureProfile(){
   const { data } = await sb.from("perfis").select("*").eq("id", state.session.user.id).maybeSingle();
@@ -1258,6 +1285,7 @@ function renderRanking(){
             <div class="podium-avatar">${r.avatar || initialsOf(r.nome)}</div>
             <div class="podium-name">${r.nome}</div>
             <div class="podium-pts">${r.pontos_total || 0} pts</div>
+            ${crownSummaryHtml(r.crownCounts)}
             <div class="podium-block">${place}</div>
           </div>`;
       }).join("")}
@@ -1266,7 +1294,7 @@ function renderRanking(){
   const restHtml = rest.map((r,i) => `
     <div class="rank-row">
       <div class="rank-pos">${i + 4}</div>
-      <div class="rank-name">${r.nome}</div>
+      <div class="rank-name">${r.nome}${crownSummaryHtml(r.crownCounts)}</div>
       <div class="rank-pts">${r.pontos_total || 0}</div>
     </div>
   `).join("");
